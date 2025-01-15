@@ -1,13 +1,13 @@
 require 'package'
-require_relative 'pangomm_1_4'
-require_relative 'pangomm_2_48'
+Package.load_package("#{__dir__}/pangomm_1_4.rb")
+Package.load_package("#{__dir__}/pangomm_2_48.rb")
 
 class Pangomm < Package
-  description Pangomm_1_4.description.to_s
-  homepage Pangomm_1_4.homepage.to_s
+  description Pangomm_1_4.description
+  homepage Pangomm_1_4.homepage
   version "#{Pangomm_1_4.version}+#{Pangomm_2_48.version}"
-  license Pangomm_1_4.license.to_s
-  compatibility Pangomm_1_4.compatibility.to_s
+  license Pangomm_1_4.license
+  compatibility Pangomm_1_4.compatibility
 
   is_fake
 

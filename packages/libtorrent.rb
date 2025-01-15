@@ -1,34 +1,24 @@
-require 'package'
+require 'buildsystems/cmake'
 
-class Libtorrent < Package
+class Libtorrent < CMake
   description 'Feature complete C++ bittorrent implementation focusing on efficiency and scalability.'
   homepage 'https://www.libtorrent.org/'
-  version '2.0.9'
+  version '2.0.10'
   license 'Unknown, BSD-3-Clause'
-  compatibility 'x86_64 aarch64 armv7l'
-  source_url 'https://github.com/arvidn/libtorrent/releases/download/v2.0.9/libtorrent-rasterbar-2.0.9.tar.gz'
+  compatibility 'all'
+  source_url "https://github.com/arvidn/libtorrent/releases/download/v#{version}/libtorrent-rasterbar-#{version}.tar.gz"
   source_sha256 '90cd92b6061c5b664840c3d5e151d43fedb24f5b2b24e14425ffbb884ef1798e'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtorrent/2.0.9_armv7l/libtorrent-2.0.9-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtorrent/2.0.9_armv7l/libtorrent-2.0.9-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libtorrent/2.0.9_x86_64/libtorrent-2.0.9-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '2f5e89080e1a33b85c2d0251bce32f5fed15e575e1d9c31ab4443bb25d297864',
-     armv7l: '2f5e89080e1a33b85c2d0251bce32f5fed15e575e1d9c31ab4443bb25d297864',
-     x86_64: '3645ec9a0eb50e1c11f046206a372e9973264f64acd35d8a2d4c711804757b1e'
+    aarch64: 'cf3e30dd7fffa4a538d2d33ddc58fe939fb0bf09a483c0dbc1294f2c5aad49e3',
+     armv7l: 'cf3e30dd7fffa4a538d2d33ddc58fe939fb0bf09a483c0dbc1294f2c5aad49e3',
+       i686: '1c7df2be1186aa7d946fe462cebe6f1176ee15f907bd51ed681bfa95daf29546',
+     x86_64: '1b9aa2111346efb2f6fcdbcbecd5d1e01ede2c571c16cd4f36f72cb228099fe5'
   })
 
-  depends_on 'cmake' => :build
   depends_on 'boost'
-
-  def self.build
-    system "cmake -B builddir #{CREW_CMAKE_OPTIONS} -G Ninja"
-    system "#{CREW_NINJA} -C builddir"
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
-  end
+  depends_on 'gcc_lib' # R
+  depends_on 'glibc' # R
+  depends_on 'openssl' # R
 end

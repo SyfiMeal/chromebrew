@@ -3,35 +3,30 @@ require 'package'
 class Tdb < Package
   description 'tdb is a simple database API for sharing structures between parts of Samba'
   homepage 'https://tdb.samba.org/'
-  @_ver = '1.4.8'
-  version "#{@_ver}-py3.11"
+  version "1.4.12-#{CREW_PY_VER}"
   license 'GPL-3'
   compatibility 'all'
-  source_url "https://www.samba.org/ftp/tdb/tdb-#{@_ver}.tar.gz"
-  source_sha256 '8434c9c857d13ce3fa8466f75601f25c3693676b36919f159e0ad6121baf5ce8'
+  source_url "https://www.samba.org/ftp/tdb/tdb-#{version.split('-').first}.tar.gz"
+  source_sha256 '6ce4b27498812d09237ece65a0d6dfac0941610e709848ecb822aa241084cd7a'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/tdb/1.4.8-py3.11_armv7l/tdb-1.4.8-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/tdb/1.4.8-py3.11_armv7l/tdb-1.4.8-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/tdb/1.4.8-py3.11_i686/tdb-1.4.8-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/tdb/1.4.8-py3.11_x86_64/tdb-1.4.8-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '446c1ee82faf153a38f0e2d04b1e187ba4111df6f97689a3491c9440e0d92b24',
-     armv7l: '446c1ee82faf153a38f0e2d04b1e187ba4111df6f97689a3491c9440e0d92b24',
-       i686: '15964b73b8dba92077bca5ed900d7be5a62bee9b26bc772ca04962afd12ad0be',
-     x86_64: 'e041c23152bcdc8672f274baa1e4667db5505b6187e9541dabb0c50790229d96'
+    aarch64: '869c46af87e6828afb3343c472d6f44e93f9cbca3c8ddfca9674cc997b963339',
+     armv7l: '869c46af87e6828afb3343c472d6f44e93f9cbca3c8ddfca9674cc997b963339',
+       i686: 'c073e3b4552e61a1601c5038133e3c36c2c56cc740f3650ffbf1f176ab2e22c3',
+     x86_64: '19f09414803c8dac3596267d55de2324ca9c564379bb336f82ff853f53b11f4e'
   })
 
   depends_on 'docbook_xsl' => :build
   depends_on 'gcc_lib' # R
+  depends_on 'gdb' => :build
   depends_on 'glibc' # R
   depends_on 'libbsd' # R
   depends_on 'libxslt' => :build
   depends_on 'python3' => :build
 
   def self.build
-    system "./configure #{CREW_OPTIONS.sub(/--program-suffix.*/, '')}"
+    system "./configure #{CREW_CONFIGURE_OPTIONS.sub(/--program-suffix.*/, '')}"
     system 'make'
   end
 

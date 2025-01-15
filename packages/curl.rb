@@ -1,25 +1,20 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Curl < Package
+class Curl < Autotools
   description 'Command line tool and library for transferring data with URLs.'
   homepage 'https://curl.se/'
-  version '8.1.2'
+  version '8.11.1'
   license 'curl'
   compatibility 'all'
-  source_url 'https://curl.se/download/curl-8.1.2.tar.xz'
-  source_sha256 '31b1118eb8bfd43cd95d9a3f146f814ff874f6ed3999b29d94f4d1e7dbac5ef6'
+  source_url "https://curl.se/download/curl-#{version}.tar.xz"
+  source_sha256 'db59cf0d671ca6e7f5c2c5ec177084a33a79e04c97e71cf183a5cdea235054eb'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/curl/8.1.2_armv7l/curl-8.1.2-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/curl/8.1.2_armv7l/curl-8.1.2-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/curl/8.1.2_i686/curl-8.1.2-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/curl/8.1.2_x86_64/curl-8.1.2-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'f61797ea0812422a343bb2de6d6be68ae4391630ea8552c9b6f93eb3021ce282',
-     armv7l: 'f61797ea0812422a343bb2de6d6be68ae4391630ea8552c9b6f93eb3021ce282',
-       i686: 'c72d008177000b151c28095477feae0d75056f76f97b20a687c6c02dbd610985',
-     x86_64: '4b664fdab78743015c37fbc11af00e34991097137ca955869629a77bd023822d'
+    aarch64: '8647e8fb9fffb438d432e23aad432f7138658b6f150a5446c83c24e6bee816a1',
+     armv7l: '8647e8fb9fffb438d432e23aad432f7138658b6f150a5446c83c24e6bee816a1',
+       i686: '1829a7e66679cb47f4ea07ea9ebd6b394afa5d6208be343663d58249bf1fb597',
+     x86_64: '0be964075c3d19998e156127b2cd4081f0728c53c192d47b8e3c943fec87fd13'
   })
 
   depends_on 'brotli' # R
@@ -37,14 +32,10 @@ class Curl < Package
   depends_on 'python3' => :build
   depends_on 'rust' => :build
   depends_on 'valgrind' => :build
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
   depends_on 'zstd' # R
 
-  def self.build
-    system '[ -x configure ] || autoreconf -fvi'
-    system 'filefix'
-    system "mold -run ./configure #{CREW_OPTIONS} \
-      --disable-maintainer-mode \
+  configure_options "--disable-maintainer-mode \
       --enable-ares \
       --enable-ipv6 \
       --enable-ldap \
@@ -56,10 +47,4 @@ class Curl < Package
       --with-openssl \
       --without-gnutls \
       --without-librtmp"
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
 end

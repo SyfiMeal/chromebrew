@@ -1,40 +1,33 @@
-require 'package'
+require 'buildsystems/python'
 
-class Yt_dlp < Package
+class Yt_dlp < Python
   description 'A fork of youtube-dl with additional features and patches'
   homepage 'https://github.com/yt-dlp/yt-dlp'
-  @_ver = '2023.03.04'
-  version "#{@_ver}-py3.11"
+  @_ver = '2023.11.16'
+  version "#{@_ver}-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
   source_url 'https://github.com/yt-dlp/yt-dlp.git'
   git_hashtag @_ver
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/yt_dlp/2023.03.04-py3.11_armv7l/yt_dlp-2023.03.04-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/yt_dlp/2023.03.04-py3.11_armv7l/yt_dlp-2023.03.04-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/yt_dlp/2023.03.04-py3.11_i686/yt_dlp-2023.03.04-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/yt_dlp/2023.03.04-py3.11_x86_64/yt_dlp-2023.03.04-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '2ae5540262579a43124135e33b9026d8acdcfc9347736d7bbaf5e118fa71589f',
-     armv7l: '2ae5540262579a43124135e33b9026d8acdcfc9347736d7bbaf5e118fa71589f',
-       i686: 'fd6e22cab07b859ee28e5e47887aa750cf2bab726757cb276c2ccaacb0e34b97',
-     x86_64: '630ed8157892c542d237b5cb286e49e7efc0fa237d86f0da6cf6c869c2c31b2a'
+    aarch64: '88d16c94433eebc091c1ff59aceb6e538efacdcc9328e1744e31a56bb2aa3156',
+     armv7l: '88d16c94433eebc091c1ff59aceb6e538efacdcc9328e1744e31a56bb2aa3156',
+       i686: '578247d398de210015c9f0085b0ebcd9784e6d66a3858f62e76efbef2de75b71',
+     x86_64: '2e8e2cbdeb7e557e08e17ecde8e605f2d3e787f043995d4dcfd42ddb5dcccdc9'
   })
 
-  depends_on 'pandoc' => :build
   depends_on 'py3_brotlicffi'
   depends_on 'py3_certifi'
   depends_on 'py3_mutagen'
   depends_on 'py3_pycryptodomex'
   depends_on 'py3_websockets'
+  depends_on 'python3'
 
-  def self.build
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", "MANDIR=#{CREW_MAN_PREFIX}", 'install'
+  def self.postinstall
+    ExitMessage.add <<~EOF.lightblue
+      Type 'yt-dlp' to get started.
+    EOF
   end
 end

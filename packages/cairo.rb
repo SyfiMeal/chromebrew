@@ -1,30 +1,27 @@
-require 'package'
+require 'buildsystems/meson'
+# build order: harfbuzz => freetype => fontconfig => cairo => pango
 
-class Cairo < Package
+class Cairo < Meson
   description 'Cairo is a 2D graphics library with support for multiple output devices.'
   homepage 'https://www.cairographics.org'
-  version '1.17.8-af5a25a'
+  version '1.18.2-1'
   license 'LGPL-2.1 or MPL-1.1'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.freedesktop.org/cairo/cairo.git'
-  git_hashtag 'af5a25a7f19e8fe6242c50f17bd246f98b6fdf87'
+  git_hashtag version.split('-').first
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/cairo/1.17.8-af5a25a_armv7l/cairo-1.17.8-af5a25a-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/cairo/1.17.8-af5a25a_armv7l/cairo-1.17.8-af5a25a-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/cairo/1.17.8-af5a25a_i686/cairo-1.17.8-af5a25a-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/cairo/1.17.8-af5a25a_x86_64/cairo-1.17.8-af5a25a-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '9e8b8dc46bc173ca21a45b5f0c500c96e1cfcadd1985548568adecb25ff96ec0',
-     armv7l: '9e8b8dc46bc173ca21a45b5f0c500c96e1cfcadd1985548568adecb25ff96ec0',
-       i686: 'e5e7549bbedbb0dd1f49488f253deb11b504147e39adf99733ce5c664d237022',
-     x86_64: 'ded85aef72c1c263d094b18a95201cd9e933c39b880e6ff41782c14090b8a9be'
+    aarch64: 'e640a24226ef7ddab47d799dfef8606594f18759a3cad5cd17ceae4b3ed54168',
+     armv7l: 'e640a24226ef7ddab47d799dfef8606594f18759a3cad5cd17ceae4b3ed54168',
+     x86_64: '5ad71a18ae15d987e5cf0565a946a9b384bd2f8ada5df67a4e6630d80ae9e050'
   })
 
+  depends_on 'fontconfig' # R
+  depends_on 'freetype' # R
   depends_on 'gcc_lib' # R
-  depends_on 'glib' # R
   depends_on 'glibc' # R
+  depends_on 'glib' # R
   depends_on 'harfbuzz' # R
   depends_on 'libpng' # R
   depends_on 'libx11' # R
@@ -33,21 +30,10 @@ class Cairo < Package
   depends_on 'lzo' # R
   depends_on 'mesa' => :build
   depends_on 'pixman' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   conflicts_ok # because this overwrites the limited cairo from harfbuzz
 
-  def self.build
-    system "meson setup #{CREW_MESON_OPTIONS} \
-    -Dxlib-xcb=enabled \
-    -Dtee=enabled \
-    -Dtests=disabled \
-    builddir"
-    system 'meson configure builddir'
-    system "#{CREW_NINJA} -C builddir"
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
-  end
+  meson_options '-Dxlib-xcb=enabled \
+    -Dtests=disabled'
 end

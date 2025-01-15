@@ -1,40 +1,26 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_lxml < Package
+class Py3_lxml < Pip
   description 'LXML is a Python library for processing XML and HTML.'
   homepage 'https://lxml.de/'
-  @_ver = '4.9.1'
-  version "#{@_ver}-py3.11"
+  version "5.3.0-#{CREW_PY_VER}"
   license 'BSD-3'
   compatibility 'all'
-  source_url 'https://github.com/lxml/lxml.git'
-  git_hashtag "lxml-#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_lxml/4.9.1-py3.11_armv7l/py3_lxml-4.9.1-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_lxml/4.9.1-py3.11_armv7l/py3_lxml-4.9.1-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_lxml/4.9.1-py3.11_i686/py3_lxml-4.9.1-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_lxml/4.9.1-py3.11_x86_64/py3_lxml-4.9.1-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '0a3c0b190f0a9d5187aacfb2e16e5a1a36f11629ae5493ea1e1f5f60a56168e4',
-     armv7l: '0a3c0b190f0a9d5187aacfb2e16e5a1a36f11629ae5493ea1e1f5f60a56168e4',
-       i686: '2cb5e17d85385a5305a714e28c5af5bbb62070e110a502227718f53da2bd759e',
-     x86_64: '01b2be20303249f5ffaa89499d6903ba6210ae74355c017c06b9087921467177'
+    aarch64: '561a45432b37e8ec6a4784dd23adc1bfe8977f7de2f4a06091ccb0935571691d',
+     armv7l: '561a45432b37e8ec6a4784dd23adc1bfe8977f7de2f4a06091ccb0935571691d',
+       i686: 'afdcc8ac2b37962b76d15b91db1a6764961841fd2f904455c8fb2b45f206912c',
+     x86_64: 'e5dfa06f0d105752fde85b382b8f458026f4f52cfb5c8aef5f6a82c0c0f116da'
   })
 
-  depends_on 'py3_cython' => :build
-  depends_on 'python3' => :build
   depends_on 'glibc' # R
   depends_on 'libxml2' # R
   depends_on 'libxslt' # R
-  depends_on 'zlibpkg' # R
-
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  depends_on 'py3_cython' => :build
+  depends_on 'python3' # R
+  depends_on 'zlib' # R
+  no_source_build
 end

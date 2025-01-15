@@ -2,8 +2,8 @@ require 'package'
 
 class Buildessential < Package
   description 'A collection of tools essential to compile and build software.'
-  homepage ''
-  version '1.24'
+  homepage 'SKIP'
+  version '1.39'
   license 'GPL-3+'
   compatibility 'all'
 
@@ -13,7 +13,8 @@ class Buildessential < Package
   depends_on 'core'
 
   # install first to get ldconfig
-  depends_on 'glibc'
+  depends_on 'glibc_lib'
+  depends_on 'glibc_dev'
   depends_on 'gcc_dev'
   depends_on 'gmp'
   depends_on 'mpfr'
@@ -22,11 +23,15 @@ class Buildessential < Package
   depends_on 'libyaml'
   depends_on 'linuxheaders'
   depends_on 'make'
-  depends_on 'pkgconfig'
+  depends_on 'pkg_config'
   depends_on 'binutils'
 
   # Linkers
   depends_on 'mold'
+
+  # findutils is needed for the newer version
+  # of 'find' used by crew in 'prepare_package'
+  depends_on 'findutils'
 
   # typically required libraries & tools to configure packages
   # e.g. using "./autogen.sh"
@@ -40,7 +45,7 @@ class Buildessential < Package
   depends_on 'libtool'
   depends_on 'patch'
   depends_on 'sed'
-  depends_on 'util_macros'
+  depends_on 'xorg_macros'
   depends_on 'valgrind'
 
   # build documentation
@@ -65,6 +70,9 @@ class Buildessential < Package
   # COBOL
   # depends_on 'gnucobol'
 
+  # getrealdeps needs gawk
+  depends_on 'gawk'
+
   # Google
   # depends_on 'dart'
   # depends_on 'flutter'
@@ -82,9 +90,6 @@ class Buildessential < Package
   # depends_on 'openjdk11'
   # depends_on 'openjdk17'
 
-  # Linter
-  depends_on 'linter'
-
   # Lisp
   # depends_on 'ccl'
   # depends_on 'clisp'
@@ -95,11 +100,11 @@ class Buildessential < Package
 
   # LLVM
   # This can be pulled in on a per-package basis...
-  # depends_on 'llvm_dev16'
-  depends_on 'llvm_lib16' # This provides llvm-strip
+  # depends_on 'llvm19_dev'
+  depends_on 'llvm19_lib' # This provides llvm-strip
 
   # Meson build system
-  depends_on 'meson'
+  depends_on 'py3_meson'
 
   # Node.js
   # depends_on 'nodebrew'
@@ -130,12 +135,14 @@ class Buildessential < Package
 
   # Python
   depends_on 'python3'
-  depends_on 'py3_build'
-  depends_on 'py3_installer'
+  # depends_on 'py3_build'
+  # depends_on 'py3_installer'
   depends_on 'py3_flit_core'
-  depends_on 'python3'
+  depends_on 'py3_libxml2'
   # Pax_utils needs this.
   depends_on 'py3_pyelftools'
+  # Needed for pypi uploads to gitlab
+  depends_on 'py3_twine'
 
   # Qt
   # depends_on 'qtcreator'
@@ -155,18 +162,22 @@ class Buildessential < Package
 
   # Packages needed for shrinking package archives
   depends_on 'rdfind'
-  depends_on 'symlinks'
   depends_on 'upx'
 
   # Packages needed for compressing archives
   depends_on 'zstd'
 
   # Ruby gems
+  # Add ruby_concurrent_ruby
+  depends_on 'ruby_concurrent_ruby'
+  # Needed for irb
+  depends_on 'ruby_debug'
+  # For crew debugging.
+  depends_on 'ruby_pry_byebug'
   # Add rubocop for linting packages. (This also installs the
   # rubocop config file.)
   depends_on 'ruby_rubocop'
-  # Add ruby_debug
-  depends_on 'ruby_debug'
-  # Add ruby_concurrent_ruby
-  depends_on 'ruby_concurrent_ruby'
+
+  # Code quality
+  depends_on 'py3_pre_commit'
 end

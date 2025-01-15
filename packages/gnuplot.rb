@@ -1,42 +1,33 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Gnuplot < Package
+class Gnuplot < Autotools
   description 'Gnuplot is a portable command-line driven graphing utility'
-  homepage 'http://gnuplot.sourceforge.net/'
-  version '5.2.6'
+  homepage 'https://gnuplot.sourceforge.net/'
+  version '6.0.2'
   license 'gnuplot'
-  compatibility 'all'
-  source_url 'https://downloads.sourceforge.net/project/gnuplot/gnuplot/5.2.6/gnuplot-5.2.6.tar.gz'
-  source_sha256 '35dd8f013139e31b3028fac280ee12d4b1346d9bb5c501586d1b5a04ae7a94ee'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url "https://downloads.sourceforge.net/project/gnuplot/gnuplot/#{version}/gnuplot-#{version}.tar.gz"
+  source_sha256 'f68a3b0bbb7bbbb437649674106d94522c00bf2f285cce0c19c3180b1ee7e738'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gnuplot/5.2.6_armv7l/gnuplot-5.2.6-chromeos-armv7l.tar.xz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gnuplot/5.2.6_armv7l/gnuplot-5.2.6-chromeos-armv7l.tar.xz',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gnuplot/5.2.6_i686/gnuplot-5.2.6-chromeos-i686.tar.xz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gnuplot/5.2.6_x86_64/gnuplot-5.2.6-chromeos-x86_64.tar.xz'
-  })
   binary_sha256({
-    aarch64: '52d2a8b203fff954f4304294cb51c41d26d65fb071f13bb6020be7ca767028f9',
-     armv7l: '52d2a8b203fff954f4304294cb51c41d26d65fb071f13bb6020be7ca767028f9',
-       i686: '9c635ed8cd0386c877f9bc8801e709a2825730614f71c3b397217c13ed8a9bd8',
-     x86_64: '13dec5a3289609f06c963ce97dfe5157c34fd816e71842806401e6d9727cc7b0'
+    aarch64: 'c942209f80d406f73ed343cabcaf11e05017c9dfeef7655bde3c47574b882c29',
+     armv7l: 'c942209f80d406f73ed343cabcaf11e05017c9dfeef7655bde3c47574b882c29',
+     x86_64: 'a3a87f4195008a31f6d11bde6c19a22594673b7c7a25a6a2fa628a1ba284c7f7'
   })
 
+  depends_on 'cairo'
   depends_on 'libcerf'
+  depends_on 'libgd'
+  depends_on 'libwebp'
   depends_on 'libxrender'
   depends_on 'libxxf86vm'
   depends_on 'lua'
   depends_on 'pango'
+  depends_on 'qt5_base'
+  depends_on 'qt5_svg'
+  depends_on 'qt5_tools'
+  depends_on 'wxwidgets'
 
-  def self.build
-    system './configure',
-           "--prefix=#{CREW_PREFIX}",
-           "--libdir=#{CREW_LIB_PREFIX}",
-           '--disable-maintainer-mode'
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
+  configure_options "CFLAGS='-I#{CREW_PREFIX}/share/Qt-5/include/QtCore'"
 end

@@ -1,37 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_pyxdg < Package
+class Py3_pyxdg < Pip
   description 'PyXDG contains implementations of freedesktop.org standards in python.'
   homepage 'https://freedesktop.org/wiki/Software/pyxdg/'
-  @_ver = '0.28'
-  version "#{@_ver}-py3.11"
+  version "0.28-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/takluyver/pyxdg.git'
-  git_hashtag "rel-#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyxdg/0.28-py3.11_armv7l/py3_pyxdg-0.28-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyxdg/0.28-py3.11_armv7l/py3_pyxdg-0.28-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyxdg/0.28-py3.11_i686/py3_pyxdg-0.28-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyxdg/0.28-py3.11_x86_64/py3_pyxdg-0.28-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'cb0000fd9d0c07700b63256f3c48b3e1a2b172a7169ccb5f60552067d78fedfe',
-     armv7l: 'cb0000fd9d0c07700b63256f3c48b3e1a2b172a7169ccb5f60552067d78fedfe',
-       i686: '65692757bc5c6624a037b223edf738ce861a5fba9eea5bc05f3c07a8184fd5c5',
-     x86_64: 'da83893265d4bcfd96676abc00eb9ff63478f04918e3aae0fea53de580916950'
+    aarch64: 'b0e027c8a2cdeeb3cb9ea7b658d29fad8827e52e2a9d4746938d684138f62e4c',
+     armv7l: 'b0e027c8a2cdeeb3cb9ea7b658d29fad8827e52e2a9d4746938d684138f62e4c',
+       i686: '2a402e65a7dcc76094e0932cfbdd481153dbd5e0f8d1a36f97a38993ae5d20cb',
+     x86_64: 'd2a2cbb926226a5096f02b4191c540d1897ed339805c2a4fd9997d56e5f1c4d6'
   })
 
   depends_on 'python3' => :build
 
-  no_compile_needed
-
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

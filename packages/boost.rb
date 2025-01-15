@@ -3,32 +3,27 @@ require 'package'
 class Boost < Package
   description 'Boost provides free peer-reviewed portable C++ source libraries.'
   homepage 'https://www.boost.org/'
-  @_ver = '1.81.0'
-  version @_ver
+  version "1.85.0-#{CREW_ICU_VER}-#{CREW_PY_VER}"
   license 'Boost-1.0'
   compatibility 'all'
-  source_url "https://boostorg.jfrog.io/artifactory/main/release/#{@_ver}/source/boost_#{@_ver.gsub('.', '_')}.tar.bz2"
-  source_sha256 '71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa'
+  source_url "https://boostorg.jfrog.io/artifactory/main/release/#{version.split('-').first}/source/boost_#{version.split('-').first.gsub('.', '_')}.tar.bz2"
+  source_sha256 '7009fe1faa1697476bdc7027703a2badb84e849b7b0baad5086b087b971f8617'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/boost/1.81.0_armv7l/boost-1.81.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/boost/1.81.0_armv7l/boost-1.81.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/boost/1.81.0_i686/boost-1.81.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/boost/1.81.0_x86_64/boost-1.81.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '82924d65aba189e489e722951e78826136c272d9aa9ddf1dd904357740652752',
-     armv7l: '82924d65aba189e489e722951e78826136c272d9aa9ddf1dd904357740652752',
-       i686: 'd025176329c1186d773a4fdfe756c87cf9347ecd74be4fdee622e45a77480ba3',
-     x86_64: '44cb11073f0f9bb8cb7b4e4e4f436b12b1d8880e68c51178e9ebfb373fec3cd6'
+    aarch64: '0a8b31c3ea2d515e867ee006eb68a5958536044cf3009513c1b2753cf982a28d',
+     armv7l: '0a8b31c3ea2d515e867ee006eb68a5958536044cf3009513c1b2753cf982a28d',
+       i686: '572e6f8afc10744d96cd1b3caa29a8a67d16a0dff2a3b2791353dc92b97af9f5',
+     x86_64: '3ed4dc23d4011a5f1d77a70004ddec926b7cde25ece5cdc23e59e63d32fc5a86'
   })
 
-  depends_on 'bz2' # R
+  depends_on 'bzip2' # R
   depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
   depends_on 'icu4c' # R
+  depends_on 'python3' => :build
   depends_on 'xzutils' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
   depends_on 'zstd' # R
 
   def self.build

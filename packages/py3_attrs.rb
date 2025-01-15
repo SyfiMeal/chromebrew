@@ -1,35 +1,24 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_attrs < Package
+class Py3_attrs < Pip
   description 'Attrs removes the need to implement object protocols in classes.'
   homepage 'https://www.attrs.org/'
-  @_ver = '21.2.0'
-  version "#{@_ver}-py3.11"
+  version "24.3.0-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/python-attrs/attrs.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_attrs/21.2.0-py3.11_armv7l/py3_attrs-21.2.0-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_attrs/21.2.0-py3.11_armv7l/py3_attrs-21.2.0-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_attrs/21.2.0-py3.11_i686/py3_attrs-21.2.0-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_attrs/21.2.0-py3.11_x86_64/py3_attrs-21.2.0-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'cc5c06ffb9a2c15e46cbeb00b2f3899857791ebd5cc41fdd135c95a110b7c9ef',
-     armv7l: 'cc5c06ffb9a2c15e46cbeb00b2f3899857791ebd5cc41fdd135c95a110b7c9ef',
-       i686: '5efa04af8a9ee8ed01b51de9b417106ae13b4d2b8500670fdc80aa5237a5d767',
-     x86_64: 'cae9281510145bebf4032a78363c510ee3a9b866788fbb5056a13231a81d4962'
+    aarch64: '557b047eefaed2a423616108d61187a5cd2e0afbe8095e583eeb6f70e98ba6ff',
+     armv7l: '557b047eefaed2a423616108d61187a5cd2e0afbe8095e583eeb6f70e98ba6ff',
+       i686: '59faf9c8c08a400e9dca233d220b8236fda5e823b6017760596f60af3770cd96',
+     x86_64: 'cf30acab3973341a84b00eb5d3ad75bb76aec27d2d8bf0e6876ec5502d6cddd2'
   })
 
   depends_on 'python3' => :build
+  depends_on 'py3_hatchling' => :build
+  depends_on 'py3_hatch_vcs' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

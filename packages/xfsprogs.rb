@@ -3,23 +3,17 @@ require 'package'
 class Xfsprogs < Package
   description 'XFS filesystem utilities'
   homepage 'https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/'
-  version '6.3.0'
+  version "6.12.0-#{CREW_ICU_VER}"
   license 'LGPL-2.1'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git'
-  git_hashtag "v#{version}"
+  git_hashtag "v#{version.split('-').first}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/6.3.0_armv7l/xfsprogs-6.3.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/6.3.0_armv7l/xfsprogs-6.3.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/6.3.0_i686/xfsprogs-6.3.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/xfsprogs/6.3.0_x86_64/xfsprogs-6.3.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '022f82d3004a24de58a594be7a04903a2db2bc7740cb1f2baba25b64de688253',
-     armv7l: '022f82d3004a24de58a594be7a04903a2db2bc7740cb1f2baba25b64de688253',
-       i686: '6fb50807bba01893ea4ae58970fff9b61f6aec7ab80a47ac901af75e54fe65d8',
-     x86_64: '48d2e7511699a59e52f224109479503d5a8bdd4f39e05f4b7e0d492436360cf1'
+    aarch64: 'cece01bad384d71762c2941bab3ec26eb61dced7f308c578d2669c9dcebbae19',
+     armv7l: 'cece01bad384d71762c2941bab3ec26eb61dced7f308c578d2669c9dcebbae19',
+     x86_64: '1cb8708d6c9bd0664500acc609d3fb5e7315c1b95802e7adb7d5262fe8c972f6'
   })
 
   depends_on 'gcc_lib' # R
@@ -33,7 +27,7 @@ class Xfsprogs < Package
 
   def self.build
     system 'make configure'
-    system "DEBUG=-DNDEBUG ./configure #{CREW_OPTIONS}"
+    system "DEBUG=-DNDEBUG ./configure #{CREW_CONFIGURE_OPTIONS}"
     system 'make'
   end
 

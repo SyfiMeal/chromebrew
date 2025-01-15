@@ -1,38 +1,26 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_pyicu < Package
+class Py3_pyicu < Pip
   description 'PyICU is a Python extension wrapping the ICU C++ API.'
   homepage 'https://pyicu.org/'
-  @_ver = '2.7.4'
-  version "#{@_ver}-py3.11"
+  version "2.14-#{CREW_ICU_VER}-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://gitlab.pyicu.org/main/pyicu.git'
-  git_hashtag "v#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyicu/2.7.4-py3.11_armv7l/py3_pyicu-2.7.4-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyicu/2.7.4-py3.11_armv7l/py3_pyicu-2.7.4-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyicu/2.7.4-py3.11_i686/py3_pyicu-2.7.4-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyicu/2.7.4-py3.11_x86_64/py3_pyicu-2.7.4-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '083890c5449a49253080d5d229df05a9a2fee92b18d631be62b4d994c52e5584',
-     armv7l: '083890c5449a49253080d5d229df05a9a2fee92b18d631be62b4d994c52e5584',
-       i686: '0678ca2c498d4d0f1b6adaf71f82f3e79ac5edb0455a37405add42e4c1a1d318',
-     x86_64: 'c72cbc39569332967082b3d1e934aeb1823e494eadf8ea172d401e74b6a439c5'
+    aarch64: '1bd7f2b6ad53c7d6b9b49a81bce6fd7ea7b1340b1972c037c0c024c86dad137f',
+     armv7l: '1bd7f2b6ad53c7d6b9b49a81bce6fd7ea7b1340b1972c037c0c024c86dad137f',
+       i686: '161777426ef5031a0a05b1814ffe9981c434e5e78cdc6e1da6b05f5a4b361384',
+     x86_64: '2edcf17c5c465084f675af4792f7652adcec19ccc5197057fe6b6932a57e5871'
   })
 
   depends_on 'python3' => :build
   depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
+  depends_on 'glibc_lib' # R
   depends_on 'icu4c' # R
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

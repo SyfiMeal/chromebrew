@@ -1,33 +1,19 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Autoconf_archive < Package
+class Autoconf_archive < Autotools
   description 'GNU Autoconf Archive is a collection of freely re-usable Autoconf macros.'
   homepage 'https://www.gnu.org/software/autoconf-archive/'
-  version '2022.09.13'
+  version '2024.10.16'
   license 'GPL-3'
   compatibility 'all'
-  source_url 'https://ftpmirror.gnu.org/autoconf-archive/autoconf-archive-2022.09.03.tar.xz'
+  source_url "https://ftpmirror.gnu.org/autoconf-archive/autoconf-archive-#{version}.tar.xz"
   source_sha256 'e07454f00d8cae7907bed42d0747798927809947684d94c37207a4d63a32f423'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/autoconf_archive/2022.09.13_armv7l/autoconf_archive-2022.09.13-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/autoconf_archive/2022.09.13_armv7l/autoconf_archive-2022.09.13-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/autoconf_archive/2022.09.13_i686/autoconf_archive-2022.09.13-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/autoconf_archive/2022.09.13_x86_64/autoconf_archive-2022.09.13-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '20358b2576af31e463bcfbaa6f99470729cf1eb483531079b9e534c691648594',
-     armv7l: '20358b2576af31e463bcfbaa6f99470729cf1eb483531079b9e534c691648594',
-       i686: 'a9daa783895ede3d7b2b3fcbc75fd35257414eb612477fbac6389502138fba7b',
-     x86_64: '812f12231da8f71a5bf358cd70564975e6709e54fbcd06d6a9c58cb6d662aec8'
+    aarch64: '3e08a3bf59c5973ec5fee59d4692fd266d8082c753fca0f8dcc27448da44ba8a',
+     armv7l: '3e08a3bf59c5973ec5fee59d4692fd266d8082c753fca0f8dcc27448da44ba8a',
+       i686: '8a69c686eb94611f432847d68b8d8fa3787548d002072266e9807635c878c30b',
+     x86_64: 'dc9e54c5af6fb9271d4c5599f50f2d98f311f3550ad326b45f48eb7484255a29'
   })
-
-  def self.build
-    system "./configure #{CREW_OPTIONS}"
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
 end

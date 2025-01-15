@@ -1,25 +1,19 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Libx11 < Package
+class Libx11 < Autotools
   description 'C interface to the X window system'
-  homepage 'https://x.org'
-  version '1.8.4'
+  homepage 'https://x.org/wiki/'
+  version '1.8.10'
   license 'X11'
-  compatibility 'all'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.freedesktop.org/xorg/lib/libx11.git'
   git_hashtag "libX11-#{version}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libx11/1.8.4_armv7l/libx11-1.8.4-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libx11/1.8.4_armv7l/libx11-1.8.4-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libx11/1.8.4_i686/libx11-1.8.4-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libx11/1.8.4_x86_64/libx11-1.8.4-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '68489f184757df334f516f130f0bc304e1652577ea645d17ee545e98627ba3ce',
-     armv7l: '68489f184757df334f516f130f0bc304e1652577ea645d17ee545e98627ba3ce',
-       i686: '8c5de7d7bc568a66ae1f52f9c0beda5f53ddd8b31b5ae9ec80574ce6b189e808',
-     x86_64: '70456b24c640dea2012d0ca1b278a18f4fd8dfa6d664b54562552ce1b52c7ef4'
+    aarch64: '3e992951cf49ed047e4ef45e45b87b640e5aafed4a0614543d7c6957613dd463',
+     armv7l: '3e992951cf49ed047e4ef45e45b87b640e5aafed4a0614543d7c6957613dd463',
+     x86_64: '55c2d33cc673cec976f9f628204da0f02e83a92aae0936a42a231df81d5dd05c'
   })
 
   depends_on 'glibc' # R
@@ -29,17 +23,6 @@ class Libx11 < Package
   depends_on 'libxcb' # R
   depends_on 'libxdmcp' # R
   depends_on 'libxtrans' => :build
-  depends_on 'llvm_lib16' => :build
+  depends_on 'llvm19_lib' => :build
   depends_on 'xorg_proto' => :build
-
-  def self.build
-    system '[ -x configure ] || NOCONFIGURE=1 ./autogen.sh'
-    system 'filefix'
-    system "./configure #{CREW_OPTIONS}"
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
 end

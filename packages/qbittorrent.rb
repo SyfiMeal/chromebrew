@@ -1,37 +1,30 @@
-require 'package'
+require 'buildsystems/cmake'
 
-class Qbittorrent < Package
+class Qbittorrent < CMake
   description 'Open-source software alternative to µTorrent.'
   homepage 'https://www.qbittorrent.org/'
-  version '4.5.3'
+  version '4.6.7'
   license 'GPL-2'
   compatibility 'x86_64 aarch64 armv7l'
-  source_url 'https://downloads.sourceforge.net/project/qbittorrent/qbittorrent/qbittorrent-4.5.3/qbittorrent-4.5.3.tar.xz'
-  source_sha256 '017253c83ed0cd7893d6b5fb4a669790502226afc27df14e0ecdfdba3568d60a'
+  min_glibc '2.37'
+  source_url "https://downloads.sourceforge.net/project/qbittorrent/qbittorrent/qbittorrent-#{version}/qbittorrent-#{version}.tar.xz"
+  source_sha256 'bcf2dcf52a0186c3f5da2f1413453888654dc1aee5e4ad80e5a026764bc640c4'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/qbittorrent/4.5.3_armv7l/qbittorrent-4.5.3-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/qbittorrent/4.5.3_armv7l/qbittorrent-4.5.3-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/qbittorrent/4.5.3_x86_64/qbittorrent-4.5.3-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '0b4e50e72927dbf7511f23104c2dc6b6deaa5aa7e1bbf3cf87d28e8fa6ef1e66',
-     armv7l: '0b4e50e72927dbf7511f23104c2dc6b6deaa5aa7e1bbf3cf87d28e8fa6ef1e66',
-     x86_64: 'a2c023d33b08d62946be072b81e4f2e6383dd55bfa96d55c36fbbf11ceb42e7d'
+    aarch64: 'ab18023baf9d990fb90acabc39884c9b0f38ef008e9ecef20cd9d90dea9619b6',
+     armv7l: 'ab18023baf9d990fb90acabc39884c9b0f38ef008e9ecef20cd9d90dea9619b6',
+     x86_64: 'dbaca4cd1e372ac6707b8d9547bf571d401067c1c151ca55f8cb9bb61f0824f0'
   })
 
   depends_on 'cmake' => :build
-  depends_on 'qtbase'
-  depends_on 'qttools' => :build
-  depends_on 'qtsvg'
-  depends_on 'libtorrent'
-
-  def self.build
-    system "cmake -B builddir #{CREW_CMAKE_OPTIONS} -G Ninja"
-    system "#{CREW_NINJA} -C builddir"
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
-  end
+  depends_on 'gcc_lib' # R
+  depends_on 'glibc_lib' # R
+  depends_on 'glibc' # R
+  depends_on 'libtorrent' # R
+  depends_on 'openssl' # R
+  depends_on 'qt5_base' # R
+  depends_on 'qt5_svg' => :build
+  depends_on 'qt5_tools' => :build
+  depends_on 'zlib' # R
 end

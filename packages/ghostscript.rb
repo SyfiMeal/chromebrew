@@ -3,54 +3,49 @@ require 'package'
 class Ghostscript < Package
   description 'Interpreter for the PostScript language'
   homepage 'https://www.ghostscript.com/'
-  version '10.01.1'
+  version '10.04.0'
   license 'AGPL-3+'
   compatibility 'x86_64 aarch64 armv7l'
-  source_url 'https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10011/ghostpdl-10.01.1.tar.xz'
-  source_sha256 'e6a6c39a36e6b6ffe4960f4e2bfb85420ed157ac14a202ccdd0df4e4e2a7e392'
+  source_url 'https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10040/ghostpdl-10.04.0.tar.xz'
+  source_sha256 '0603f5629bc6f567b454911d104cd96702489c9e70e577787843f480b23d4a77'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ghostscript/10.01.1_armv7l/ghostscript-10.01.1-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ghostscript/10.01.1_armv7l/ghostscript-10.01.1-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ghostscript/10.01.1_x86_64/ghostscript-10.01.1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '708dcba34f11085f789bbb2ecbf9b85a7bc9218d1780f0f68983e73adf6d61fb',
-     armv7l: '708dcba34f11085f789bbb2ecbf9b85a7bc9218d1780f0f68983e73adf6d61fb',
-     x86_64: '5042fba200abc52486a404aa44acc0e85c8be5c48f0f7a0e667a3a22afef1b54'
+    aarch64: 'ebadc4e1e882398f800455434158d3260d61d32e42f647b6f9d803c8d750d2c3',
+     armv7l: 'ebadc4e1e882398f800455434158d3260d61d32e42f647b6f9d803c8d750d2c3',
+     x86_64: 'efdcd90cb6598beccfb3d16d090fa86fa282a59975565d4ee220bd3f19440812'
   })
 
   depends_on 'at_spi2_core' # R
   depends_on 'cairo' => :build
+  depends_on 'cairo' # R
   depends_on 'cups' # R
   depends_on 'expat' # R
   depends_on 'fontconfig' => :build
+  depends_on 'fontconfig' # R
   depends_on 'freetype' # R
   depends_on 'gcc_lib' # R
   depends_on 'gdk_pixbuf' # R
   depends_on 'glibc' # R
   depends_on 'glib' # R
-  depends_on 'gtk3' unless ARCH == 'i686' # R
+  depends_on 'gtk3' # R
   depends_on 'harfbuzz' # R
   depends_on 'jbigkit' => :build
   depends_on 'lcms' # R
-  depends_on 'libarchive' # R
   depends_on 'libice' # R
-  depends_on 'libjpeg' # R
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libpaper' # R
   depends_on 'libpng' # R
   depends_on 'libsm' # R
   depends_on 'libtiff' # R
-  depends_on 'libvdpau' # R
   depends_on 'libx11' # R
   depends_on 'libxext' # R
   depends_on 'libxt' # R
-  depends_on 'neon' # R
   depends_on 'openjpeg' # R
   depends_on 'pango' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
-  no_env_options
+  no_lto
 
   def self.patch
     FileUtils.rm_rf %w[cups/libs expat ijs jpeg lcms2mt libpng openjpeg tiff zlib]
@@ -59,12 +54,10 @@ class Ghostscript < Package
   def self.build
     system '[ -x configure ] || NOCONFIGURE=1 ./autogen.sh'
     system 'filefix'
-    @x = ARCH == 'i686' ? '--with-x' : ''
-    # LTO fails with
-    # lto1: internal compiler error: resolution sub id 0xe18903a85a5b05ae not in object file
-    system "#{CREW_ENV_FNO_LTO_OPTIONS.gsub('-mfpu=vfpv3-d16', '-mfpu=neon-fp16')} ./configure #{CREW_OPTIONS} \
+    system "./configure #{CREW_CONFIGURE_OPTIONS} \
       --disable-hidden-visibility \
       --disable-compile-inits \
+      --disable-neon \
       --enable-dynamic \
       --enable-fontconfig \
       --enable-freetype \
@@ -74,8 +67,7 @@ class Ghostscript < Package
       --with-ijs \
       --with-jbig2dec \
       --with-libpaper \
-      --with-system-libtiff \
-      #{@x}"
+      --with-system-libtiff"
     system 'make'
     system 'make so' # Make libgs
   end

@@ -8,12 +8,8 @@ class Spacefm < Package
   compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://github.com/IgnorantGuru/spacefm/archive/1.0.6.tar.gz'
   source_sha256 'fedea9fcad776e0af4b8d90c5a1c86684a9c96ef1cdd4e959530ce93bdebe7c9'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/spacefm/1.0.6-1_armv7l/spacefm-1.0.6-1-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/spacefm/1.0.6-1_armv7l/spacefm-1.0.6-1-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/spacefm/1.0.6-1_x86_64/spacefm-1.0.6-1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: '3fc55c994d114e0a46a0177829e023224a28c55f28baf33333a900e69063e7b9',
      armv7l: '3fc55c994d114e0a46a0177829e023224a28c55f28baf33333a900e69063e7b9',
@@ -35,33 +31,31 @@ class Spacefm < Package
   depends_on 'libx11' # R
   depends_on 'pango' # R
   depends_on 'shared_mime_info' => :build
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   def self.patch
     # GCC 10.1+ Fixes
-    downloader 'https://github.com/IgnorantGuru/spacefm/pull/772.patch',
-               '737cc5f72911bcd00160260a4cd481d6fbc498f443870cbb1a7df779568e985b'
-    system 'patch -Np1 -i 772.patch', exception: false
-    # Configure.ac: Use POSIX compatible substitutions that are not specific to bash.
-    downloader 'https://github.com/IgnorantGuru/spacefm/pull/813.patch',
-               '87866ba5ff33233971ba0a31a5faddd09e31c46f4d694f4150af2e5ccefe0cf5'
-    system 'patch -Np1 -i 813.patch'
-    # add missing include to sys/sysmacros.h for 'major' and 'minor'
-    downloader 'https://github.com/IgnorantGuru/spacefm/pull/781.patch',
-               '1b00ecbb371488f966030eb6f711957480f9c5462cdf2721103574c58958dffd'
-    system 'patch -Np1 -i 781.patch'
-    # fix activating items with no focused item
-    downloader 'https://github.com/IgnorantGuru/spacefm/pull/749.patch',
-               'e263ab364fb812016d0364c3d66ddddef4f70c069facbeec208b39ea159b75df'
-    system 'patch -Np1 -i 749.patch'
-    # Avoid X-specific calls under Wayland
-    downloader 'https://github.com/IgnorantGuru/spacefm/pull/801.patch',
-               '1cd00a6ac01792e381c5fbf8d9f2eb78ac908a59760d947a070a5efe73ccabe7'
-    system 'patch -Np1 -i 801.patch'
+    patches = [
+      ['https://patch-diff.githubusercontent.com/raw/IgnorantGuru/spacefm/pull/772.patch',
+       '0e609c39362cbd9a0768e5555e3e047efeb37bab5e9371ae86295501e1a11f3d'],
+      # Configure.ac: Use POSIX compatible substitutions that are not specific to bash.
+      ['https://patch-diff.githubusercontent.com/raw/IgnorantGuru/spacefm/pull/813.patch',
+       '87866ba5ff33233971ba0a31a5faddd09e31c46f4d694f4150af2e5ccefe0cf5'],
+      # Add missing include to sys/sysmacros.h for 'major' and 'minor'.
+      ['https://patch-diff.githubusercontent.com/raw/IgnorantGuru/spacefm/pull/781.patch',
+       '1b00ecbb371488f966030eb6f711957480f9c5462cdf2721103574c58958dffd'],
+      # Fix activating items with no focused item.
+      ['https://patch-diff.githubusercontent.com/raw/IgnorantGuru/spacefm/pull/749.patch',
+       'e263ab364fb812016d0364c3d66ddddef4f70c069facbeec208b39ea159b75df'],
+      # Avoid X-specific calls under Wayland.
+      ['https://patch-diff.githubusercontent.com/raw/IgnorantGuru/spacefm/pull/801.patch',
+       '1cd00a6ac01792e381c5fbf8d9f2eb78ac908a59760d947a070a5efe73ccabe7']
+    ]
+    ConvenienceFunctions.patch(patches)
   end
 
   def self.build
-    system "mold -run ./configure #{CREW_OPTIONS} \
+    system "mold -run ./configure #{CREW_CONFIGURE_OPTIONS} \
       --with-gtk3 \
       --disable-maintainer-mode"
     system 'make'

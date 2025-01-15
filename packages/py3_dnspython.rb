@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_dnspython < Package
+class Py3_dnspython < Pip
   description 'DNSPython is a DNS toolkit.'
   homepage 'https://www.dnspython.org/'
-  @_ver = '2.1.0'
-  version "#{@_ver}-py3.11"
+  version "2.7.0-#{CREW_PY_VER}"
   license 'ISC'
   compatibility 'all'
-  source_url 'https://github.com/rthalley/dnspython.git'
-  git_hashtag "v#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_dnspython/2.1.0-py3.11_armv7l/py3_dnspython-2.1.0-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_dnspython/2.1.0-py3.11_armv7l/py3_dnspython-2.1.0-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_dnspython/2.1.0-py3.11_i686/py3_dnspython-2.1.0-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_dnspython/2.1.0-py3.11_x86_64/py3_dnspython-2.1.0-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '40ff8964fc89b2dd7af5ff4d10efb5d1cc32dfa559fd50a43c1ad35f95da7417',
-     armv7l: '40ff8964fc89b2dd7af5ff4d10efb5d1cc32dfa559fd50a43c1ad35f95da7417',
-       i686: '1bc6d84ae1a4ee138b5d827d742555178b924e8b1c73454c339a1224b48a3abb',
-     x86_64: '78917859b0b84a94219c826389f13f4f05660a1974b74e970ccdc75985938e35'
+    aarch64: '7c281e4c16ef58a393f4875c866a58818b192bcf8231af6e3500608dfd996c73',
+     armv7l: '7c281e4c16ef58a393f4875c866a58818b192bcf8231af6e3500608dfd996c73',
+       i686: '53b3dea9854a55798d90c6eedb7dc00d0d69979b0c49be5b63340a441f108ab6',
+     x86_64: 'f7839f4bb4a56a2e32ff64daed07ae147a2bfa91c3ef0516ce6c959fc6ed87da'
   })
 
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

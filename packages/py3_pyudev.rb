@@ -1,36 +1,23 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_pyudev < Package
+class Py3_pyudev < Pip
   description 'Pyudev provides Python bindings for udev.'
   homepage 'https://pyudev.readthedocs.io/'
-  @_ver = '0.22'
-  version "#{@_ver}-py3.11"
+  version "0.24.3-#{CREW_PY_VER}"
   license 'LGPL-2.1+'
   compatibility 'all'
-  source_url 'https://github.com/pyudev/pyudev.git'
-  git_hashtag "v#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyudev/0.22-py3.11_armv7l/py3_pyudev-0.22-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyudev/0.22-py3.11_armv7l/py3_pyudev-0.22-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyudev/0.22-py3.11_i686/py3_pyudev-0.22-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyudev/0.22-py3.11_x86_64/py3_pyudev-0.22-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '2b692913f4eb613fde4186b5e87e23261a6b7ee5cc77688e7501d599152a346f',
-     armv7l: '2b692913f4eb613fde4186b5e87e23261a6b7ee5cc77688e7501d599152a346f',
-       i686: 'c9375db3629c85d56ffa78b57860d97f7352afe7b9ac64836d618ac03a98fdab',
-     x86_64: '3f14169495c664e1d43ec87af8357e235b1eabd2137490fcffa154b4d21e42ce'
+    aarch64: 'dc5904f922eed95d3e34d19a8d75fbc6b25eaac2a5896f23deb366b7060ea7b6',
+     armv7l: 'dc5904f922eed95d3e34d19a8d75fbc6b25eaac2a5896f23deb366b7060ea7b6',
+       i686: '26eff0e7c5e2e780946ca442a6cfd8d5a7e50f35e7aa0cae5fb5c10b341fe406',
+     x86_64: '3580d0edd85a33d0012da3d45779f1b6ee1287c54a9e03c6c8219cce16146edb'
   })
 
   depends_on 'py3_six'
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

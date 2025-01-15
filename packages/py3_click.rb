@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_click < Package
+class Py3_click < Pip
   description 'Click is a simple wrapper around optparse for powerful command line utilities.'
   homepage 'https://click.palletsprojects.com'
-  @_ver = '8.0.3'
-  version "#{@_ver}-py3.11"
+  version "8.1.8-#{CREW_PY_VER}"
   license 'BSD-3'
   compatibility 'all'
-  source_url 'https://github.com/pallets/click.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_click/8.0.3-py3.11_armv7l/py3_click-8.0.3-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_click/8.0.3-py3.11_armv7l/py3_click-8.0.3-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_click/8.0.3-py3.11_i686/py3_click-8.0.3-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_click/8.0.3-py3.11_x86_64/py3_click-8.0.3-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '6135233d39f8258ac64e39e3c271365005995e09607c7f280bfd439a9e79c711',
-     armv7l: '6135233d39f8258ac64e39e3c271365005995e09607c7f280bfd439a9e79c711',
-       i686: '5c104e6ebff35e8d8650e9a04a823bc28773fe22c29e3cd2606f7eb459b67074',
-     x86_64: 'af275727cbea5c79880ef59c9c80dbcd9972fa9437bff7103a24cde7b86b393d'
+    aarch64: 'b232f3618ab6b48bd0477138baac8e8185cc761e51d46730608eeb1be42c475d',
+     armv7l: 'b232f3618ab6b48bd0477138baac8e8185cc761e51d46730608eeb1be42c475d',
+       i686: '006e9b6ba77331b2aefe16b0f5d35403e43b12031af5e322ece255c8928dd864',
+     x86_64: 'a12c66b8b28eb4099e281a640c3981bf83ef17b502eedcebb74393ce66a5e242'
   })
 
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

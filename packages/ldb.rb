@@ -6,28 +6,24 @@ require 'package'
 class Ldb < Package
   description 'Schema-less, ldap like, API and database'
   homepage 'https://ldb.samba.org/'
-  @_ver = '2.7.1'
-  version "#{@_ver}-py3.11"
+  version "2.9.1-#{CREW_PY_VER}"
   license 'GPLv3'
   compatibility 'all'
-  source_url "https://samba.org/ftp/ldb/ldb-#{@_ver}.tar.gz"
-  source_sha256 'c4632c9a7f81f8a45ed46fc14d18eb507edf4e79f6e88d16977478ef95ed5b7f'
+  source_url "https://samba.org/ftp/ldb/ldb-#{version.split('-').first}.tar.gz"
+  source_sha256 'c95e4dc32dea8864b79899ee340c9fdf28b486f464bbc38ba99151a08b493f9b'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ldb/2.7.1-py3.11_armv7l/ldb-2.7.1-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ldb/2.7.1-py3.11_armv7l/ldb-2.7.1-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ldb/2.7.1-py3.11_i686/ldb-2.7.1-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/ldb/2.7.1-py3.11_x86_64/ldb-2.7.1-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '40e359e72bf1046b11041574031a84d9d62395ccad88cd1e8c822278d5b8db20',
-     armv7l: '40e359e72bf1046b11041574031a84d9d62395ccad88cd1e8c822278d5b8db20',
-       i686: 'a10ee878eb6dbbab2d3c253167d62b444dcd0e69019b0e09f6a17b400f7348d0',
-     x86_64: 'f3709bc212eb23f835b530c7d277ac843d4717eea057108d7d28cade88e30a1c'
+    aarch64: '329039c021a28eeec1724ce00792262a6b7077a728b64fd766c784090daed756',
+     armv7l: '329039c021a28eeec1724ce00792262a6b7077a728b64fd766c784090daed756',
+       i686: 'ff8a1f3269a2ebcc24b9df04fbb09721d45e3fd07070cb38fda98c22bb128001',
+     x86_64: 'c51584480e0fd33624eb33c42994d38418ccf2e0f01ceb9cdc8d610e1070263c'
   })
 
   depends_on 'cmocka' => :build
   depends_on 'docbook_xsl' => :build
+  depends_on 'gcc_lib' # R
+  depends_on 'gdb' => :build
   depends_on 'glibc' # R
   depends_on 'libbsd' # R
   depends_on 'libxcrypt' => :build
@@ -41,7 +37,7 @@ class Ldb < Package
 
   def self.build
     system "./configure \
-      #{CREW_OPTIONS.sub(/--program-suffix.*/, '')} \
+      #{CREW_CONFIGURE_OPTIONS.sub(/--program-suffix.*/, '')} \
       --localstatedir=#{CREW_PREFIX}/var \
       --sysconfdir=#{CREW_PREFIX}/etc/samba \
       --with-modulesdir=#{CREW_LIB_PREFIX}/ldb/modules \

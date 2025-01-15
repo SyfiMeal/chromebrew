@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_configparser < Package
+class Py3_configparser < Pip
   description 'Configparser backports newer configparser modules to earlier python versions.'
   homepage 'https://github.com/jaraco/configparser/'
-  @_ver = '5.0.2'
-  version "#{@_ver}-py3.11"
+  version "7.1.0-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/jaraco/configparser.git'
-  git_hashtag "v#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_configparser/5.0.2-py3.11_armv7l/py3_configparser-5.0.2-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_configparser/5.0.2-py3.11_armv7l/py3_configparser-5.0.2-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_configparser/5.0.2-py3.11_i686/py3_configparser-5.0.2-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_configparser/5.0.2-py3.11_x86_64/py3_configparser-5.0.2-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'fc1f3655a4ccbc93d8a2a9f1423c4ffdbbb72b104e1ae06ef218facf7b6b22d3',
-     armv7l: 'fc1f3655a4ccbc93d8a2a9f1423c4ffdbbb72b104e1ae06ef218facf7b6b22d3',
-       i686: 'a7a33b61709c588392d13dc444db1f54af756b3fd642c60404041d1373fcefba',
-     x86_64: '89b15a470eb7e14fbca38c7fb96ab5562403e76588cb0e6eb7e8e38a67733150'
+    aarch64: 'fd3ec797bc6ac479b914551006b3498e395864c7822abcd606d57c351af0de9d',
+     armv7l: 'fd3ec797bc6ac479b914551006b3498e395864c7822abcd606d57c351af0de9d',
+       i686: 'efa5fb48152416f67183357d65a2af64aaa8c0c8eabf1086b6688dbfb0f4cd26',
+     x86_64: '29214157c0a3771b83e2d9192aeb9464f710e11293bdf7972e48e00995ab276e'
   })
 
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

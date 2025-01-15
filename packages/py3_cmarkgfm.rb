@@ -1,37 +1,24 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_cmarkgfm < Package
+class Py3_cmarkgfm < Pip
   description 'Python bindings to GitHub\'s cmark.'
   homepage 'https://github.com/theacodes/cmarkgfm'
-  @_ver = '2022.10.27'
-  version "#{@_ver}-py3.11"
+  version "2024.11.20-#{CREW_PY_VER}"
   license 'BSD'
   compatibility 'all'
-  source_url 'https://github.com/theacodes/cmarkgfm.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cmarkgfm/2022.10.27-py3.11_armv7l/py3_cmarkgfm-2022.10.27-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cmarkgfm/2022.10.27-py3.11_armv7l/py3_cmarkgfm-2022.10.27-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cmarkgfm/2022.10.27-py3.11_i686/py3_cmarkgfm-2022.10.27-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cmarkgfm/2022.10.27-py3.11_x86_64/py3_cmarkgfm-2022.10.27-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '532500c5efe07254a760c187e60fd96fab2403de450cc52c1e7baa2e08486e12',
-     armv7l: '532500c5efe07254a760c187e60fd96fab2403de450cc52c1e7baa2e08486e12',
-       i686: 'cd6a02054a304a1cf3a35fef6242ba9e3c94bb0cc47b6f5aa7aa35a3489f9b27',
-     x86_64: '4849972d806eb83d7fee77d9dd202f2859e373fd17852b4195ced7045292e0f9'
+    aarch64: '0277c9efd8fc5ad8e0d0a075e5356f3a9f13ebe92b58487789ae06b0187be0f3',
+     armv7l: '0277c9efd8fc5ad8e0d0a075e5356f3a9f13ebe92b58487789ae06b0187be0f3',
+       i686: 'd60b44e2366c538cae7bdddd583910f8a323ff021a56e6b442c556da7057d9b6',
+     x86_64: 'fc7a97d99f9d2159bc40117a76bac6ea8ad81027310fcb4e413b5a19ac112bb9'
   })
 
-  depends_on 'python3' => :build
-  depends_on 'py3_cffi'
   depends_on 'glibc' # R
+  depends_on 'py3_cffi'
+  depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

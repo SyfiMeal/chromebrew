@@ -3,21 +3,22 @@ require 'package'
 class Cabal < Package
   description 'Common Architecture for Building Applications and Libraries'
   homepage 'https://www.haskell.org/cabal/'
-  version '2.4.1.0-1'
+  version '3.14.1.0'
   license 'BSD'
-  compatibility 'i686,x86_64'
-  case ARCH
-  when 'i686'
-    source_url 'https://downloads.haskell.org/~cabal/cabal-install-2.4.1.0/cabal-install-2.4.1.0-i386-unknown-linux.tar.xz'
-    source_sha256 'b2da736cc27609442b10f77fc1a687aba603a7a33045b722dbf1a0066fade198'
-  when 'x86_64'
-    source_url 'https://downloads.haskell.org/~cabal/cabal-install-2.4.1.0/cabal-install-2.4.1.0-x86_64-unknown-linux.tar.xz'
-    source_sha256 '6136c189ffccaa39916f9cb5788f757166444a2d0c473b987856a79ecbf0c714'
-  end
+  compatibility 'x86_64 i686'
+  source_url({
+    x86_64: "https://downloads.haskell.org/~cabal/cabal-install-#{version}/cabal-install-#{version}-x86_64-linux-alpine3_12.tar.xz",
+      i686: "https://downloads.haskell.org/~cabal/cabal-install-#{version}/cabal-install-#{version}-i386-linux-alpine3_12.tar.xz"
+  })
+  source_sha256({
+    x86_64: 'b314d017d7525b662d9571b0de15870882862e32948d4c5d78e209641b474279',
+      i686: 'aeff8b622c18a8dc2cb6adc5b7e90fd807a92b51a9f689fc5804c2b91675b1b8'
+  })
 
-  depends_on 'ghc'
+  no_compile_needed
+  no_shrink
 
   def self.install
-    system "install -Dm755 cabal #{CREW_DEST_PREFIX}/bin/cabal"
+    FileUtils.install 'cabal', "#{CREW_DEST_PREFIX}/bin/cabal", mode: 0o755
   end
 end

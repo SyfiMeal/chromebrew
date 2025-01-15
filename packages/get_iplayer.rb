@@ -8,12 +8,8 @@ class Get_iplayer < Package
   compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://github.com/get-iplayer/get_iplayer/archive/v3.31.tar.gz'
   source_sha256 '21bc00887365034f76e56b829eeba8b6d510f83424ebf1840ff9ca76713f58d5'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/get_iplayer/3.31-perl5.34_armv7l/get_iplayer-3.31-perl5.34-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/get_iplayer/3.31-perl5.34_armv7l/get_iplayer-3.31-perl5.34-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/get_iplayer/3.31-perl5.34_x86_64/get_iplayer-3.31-perl5.34-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: '0fc9ba7a18b419cba3f94655b4004a9526f56907e486e7201e259230a1acca63',
      armv7l: '0fc9ba7a18b419cba3f94655b4004a9526f56907e486e7201e259230a1acca63',
@@ -26,7 +22,7 @@ class Get_iplayer < Package
   depends_on 'ffmpeg'
   depends_on 'atomicparsley'
   depends_on 'libxml2'
-  depends_on 'zlibpkg'
+  depends_on 'zlib'
 
   def self.build; end
 
@@ -41,7 +37,7 @@ class Get_iplayer < Package
     end
   end
 
-  def self.remove
+  def self.postremove
     @cpan_deps = ['LWP', 'XML::LibXML', 'Mojolicious', 'CGI']
     @cpan_deps.each do |dep|
       system "cpanm --uninstall #{dep}"

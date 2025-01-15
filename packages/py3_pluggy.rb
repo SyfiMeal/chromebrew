@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_pluggy < Package
+class Py3_pluggy < Pip
   description 'Pluggy provides plugin and hook calling mechanisms for Python.'
   homepage 'https://pluggy.readthedocs.io/'
-  @_ver = '1.0.0'
-  version "#{@_ver}-py3.11"
+  version "1.5.0-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/pytest-dev/pluggy.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pluggy/1.0.0-py3.11_armv7l/py3_pluggy-1.0.0-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pluggy/1.0.0-py3.11_armv7l/py3_pluggy-1.0.0-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pluggy/1.0.0-py3.11_i686/py3_pluggy-1.0.0-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pluggy/1.0.0-py3.11_x86_64/py3_pluggy-1.0.0-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'b9c6dda535fa966376c8876e1ddc6b252390d6701dbe62a84d523c3366712b9e',
-     armv7l: 'b9c6dda535fa966376c8876e1ddc6b252390d6701dbe62a84d523c3366712b9e',
-       i686: '024465077f9aab8d778e25b659c2504ece1695856f906470edb25c01fa138b9a',
-     x86_64: 'f6350fada307225ce3d70b8a8c35ed4cbf281704d45b53abdb85191f0d95c401'
+    aarch64: 'e408f381b1f35adb02b11b05cf3b2ffaa2545573445d305d8d473b0c2ab89728',
+     armv7l: 'e408f381b1f35adb02b11b05cf3b2ffaa2545573445d305d8d473b0c2ab89728',
+       i686: '156b9c4c00e61e4fe24b3863ed301cd090bf56a509f55ca5ca50ccaa33f44850',
+     x86_64: '8e14a5746eb128a35d536ce92fd8a5b0ec75a23b0ca7f9c978fe5091d6372d6d'
   })
 
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

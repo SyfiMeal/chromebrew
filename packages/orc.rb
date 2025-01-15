@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'gstreamer'
+Package.load_package("#{__dir__}/gstreamer.rb")
 
 class Orc < Package
   description 'Optimized Inner Loop Runtime Compiler. Bundled with gstreamer.'
   homepage 'https://gitlab.freedesktop.org/gstreamer/orc'
-  version Gstreamer.version.to_s
-  license Gstreamer.license.to_s
-  compatibility Gstreamer.compatibility.to_s
+  version Gstreamer.version
+  license Gstreamer.license
+  compatibility Gstreamer.compatibility
 
   is_fake
 

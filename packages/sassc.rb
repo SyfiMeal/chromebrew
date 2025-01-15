@@ -8,13 +8,8 @@ class Sassc < Package
   compatibility 'all'
   source_url 'https://github.com/sass/sassc.git'
   git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/sassc/3.6.2_armv7l/sassc-3.6.2-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/sassc/3.6.2_armv7l/sassc-3.6.2-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/sassc/3.6.2_i686/sassc-3.6.2-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/sassc/3.6.2_x86_64/sassc-3.6.2-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: 'b34876c122bce81fb000e249e3c240781e0815c5139255a5d92e45184959b80d',
      armv7l: 'b34876c122bce81fb000e249e3c240781e0815c5139255a5d92e45184959b80d',
@@ -22,13 +17,13 @@ class Sassc < Package
      x86_64: '1d2cc3adbb8fdab70a69cc32975f10ca8c382fe04402d9717889787bcc580ffb'
   })
 
-  depends_on 'libsass'
   depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
+  depends_on 'libsass' # R
 
   def self.build
     system 'autoreconf -i'
-    system "./configure #{CREW_OPTIONS}"
+    system "./configure #{CREW_CONFIGURE_OPTIONS}"
     system 'mold -run make'
   end
 

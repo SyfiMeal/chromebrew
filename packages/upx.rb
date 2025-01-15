@@ -1,47 +1,27 @@
 # Adapted from Arch Linux upx PKGBUILD at:
 # https://github.com/archlinux/svntogit-community/raw/packages/upx/trunk/PKGBUILD
 
-require 'package'
+require 'buildsystems/cmake'
 
-class Upx < Package
+class Upx < CMake
   description 'Extendable, high-performance executable packer for several executable formats'
   homepage 'https://github.com/upx/upx'
-  version '4.0.3-f4c4d51'
+  version '4.2.4'
   license 'custom GPL2'
   compatibility 'all'
   source_url 'https://github.com/upx/upx.git'
-  git_hashtag 'f4c4d5148e4f8c9fc5bfd2c2e836ee2aa27fbaab'
+  git_hashtag "v#{version}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/upx/4.0.3-f4c4d51_armv7l/upx-4.0.3-f4c4d51-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/upx/4.0.3-f4c4d51_armv7l/upx-4.0.3-f4c4d51-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/upx/4.0.3-f4c4d51_i686/upx-4.0.3-f4c4d51-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/upx/4.0.3-f4c4d51_x86_64/upx-4.0.3-f4c4d51-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'a6eb586e86e3566185e16873529325bc4828cf1542c02c1347eec9ef06f68309',
-     armv7l: 'a6eb586e86e3566185e16873529325bc4828cf1542c02c1347eec9ef06f68309',
-       i686: '83bf7c39b72055cd7e035d8d70def2c82252151edd3cc0f6f203cac7b35c47dc',
-     x86_64: 'f68d21c492b38e8a7e05cf02ac74455dc60799bd7734f942b188cff8b8992f84'
+    aarch64: 'd33d8bf41db6e536dc9302b62bbeb47233ab6428f5c759d4c055612aaf7551b1',
+     armv7l: 'd33d8bf41db6e536dc9302b62bbeb47233ab6428f5c759d4c055612aaf7551b1',
+       i686: 'af902974d3e7194340e450f2377bab8b6f7e2078c65f8a6e6ff071a4f41d9ac2',
+     x86_64: 'b7b9e5a160059e1ac1ea093ce7a2f2a977a6ca1eda656f96c011e42b2aa0e34f'
   })
 
-  # depends_on 'ucl'
   depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
 
-  def self.build
-    system "cmake -B builddir #{CREW_CMAKE_OPTIONS} \
-      -DUPX_CONFIG_DISABLE_GITREV=true \
-      -G Ninja"
-    system 'samu -C builddir'
-  end
-
-  def self.check
-    # samu does not work here.
-    system 'ninja test -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} samu -C builddir install"
-  end
+  cmake_options '-DUPX_CONFIG_DISABLE_GITREV=true'
 end

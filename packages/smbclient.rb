@@ -3,31 +3,27 @@ require 'package'
 class Smbclient < Package
   description 'Tools to access a servers filespace and printers via SMB'
   homepage 'https://www.samba.org'
-  version '4.18.0'
+  version "4.20.4-#{CREW_ICU_VER}"
   license 'GPLv3'
   compatibility 'all'
-  source_url 'https://download.samba.org/pub/samba/stable/samba-4.18.0.tar.gz'
-  source_sha256 '70348656ef807be9c8be4465ca157cef4d99818e234253d2c684cc18b8408149'
+  source_url "https://download.samba.org/pub/samba/stable/samba-#{version.split('-').first}.tar.gz"
+  source_sha256 '3a92e97eaeb345b6b32232f503e14d34f03a7aa64c451fe8c258a11bbda908e5'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/smbclient/4.18.0_armv7l/smbclient-4.18.0-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/smbclient/4.18.0_armv7l/smbclient-4.18.0-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/smbclient/4.18.0_i686/smbclient-4.18.0-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/smbclient/4.18.0_x86_64/smbclient-4.18.0-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'a38a5fad0e20363676d14560f9e05e3b1e746d23feed9e46fe95c7e02c62eb03',
-     armv7l: 'a38a5fad0e20363676d14560f9e05e3b1e746d23feed9e46fe95c7e02c62eb03',
-       i686: '816f819404ff0ef963606976e254b4a9ceaf672ddcd3ee47a6f2c0a02447b55b',
-     x86_64: '42b704298039f3b23734048f40ebfb0bd2067737de0befdbbff5b5d65b63837d'
+    aarch64: 'f161a7f955ecca54425add1cfd6683eabb204c15c9fd77894abe33f5546ac30f',
+     armv7l: 'f161a7f955ecca54425add1cfd6683eabb204c15c9fd77894abe33f5546ac30f',
+       i686: 'e3cf441f53e3137b89bd92c3518d76c68ac1323636ee116613d2a00f7dcc0c60',
+     x86_64: '0d52fa1f276bd5ec3ac28b4b6e132a33c4401f247a65c81626c53cfffdc25db1'
   })
 
   depends_on 'acl' # R
   depends_on 'avahi' # R
   depends_on 'cmocka' => :build
   depends_on 'cups' => :build
-  depends_on 'docbook_xsl' => :build
+  depends_on 'docbook' => :build
   depends_on 'gcc_lib' # R
+  depends_on 'gdb' => :build
   depends_on 'glibc' # R
   depends_on 'gnutls' # R
   depends_on 'gpgme' => :build
@@ -38,10 +34,12 @@ class Smbclient < Package
   depends_on 'libbsd' # R
   depends_on 'libcap' # R
   depends_on 'libtasn1' # R
+  depends_on 'libtirpc' # R
   depends_on 'libunwind' # R
   depends_on 'liburing' => :build
   depends_on 'linux_pam' # R
   depends_on 'lmdb' => :build
+  depends_on 'ncurses' # R
   depends_on 'openldap' # R
   depends_on 'perl_json' => :build
   depends_on 'perl_parse_yapp' => :build
@@ -52,7 +50,7 @@ class Smbclient < Package
   depends_on 'talloc' # R
   depends_on 'tdb' # R
   depends_on 'tevent' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   @samba4_idmap_modules = 'idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2'
   @samba4_pdb_modules = 'pdb_tdbsam,pdb_ldap,pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4'
@@ -74,7 +72,7 @@ class Smbclient < Package
   def self.build
     system './configure --help'
     system "python_LDFLAGS='' ./configure --enable-fhs \
-      #{CREW_OPTIONS.sub(/--program-suffix.*/, '')} \
+      #{CREW_CONFIGURE_OPTIONS.sub(/--program-suffix.*/, '')} \
       --sysconfdir=#{CREW_PREFIX}/etc \
       --sbindir=#{CREW_PREFIX}/bin \
       --libdir=#{CREW_LIB_PREFIX} \

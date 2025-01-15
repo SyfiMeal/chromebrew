@@ -3,22 +3,23 @@ require 'package'
 class Webkitgtk_6 < Package
   description 'Web content engine for GTK'
   homepage 'https://webkitgtk.org'
-  version '2.40.1'
+  version "2.44.2-#{CREW_ICU_VER}"
   license 'LGPL-2+ and BSD-2'
-  compatibility 'x86_64'
-  source_url 'https://webkitgtk.org/releases/webkitgtk-2.40.1.tar.xz'
-  source_sha256 '64e526984f8cd2161ef03ae949af99c002ff333d615e6386b460164a3c1b7ef6'
+  compatibility 'x86_64 aarch64 armv7l'
+  min_glibc '2.37'
+  source_url "https://webkitgtk.org/releases/webkitgtk-#{version.split('-').first}.tar.xz"
+  source_sha256 '523f42c8ff24832add17631f6eaafe8f9303afe316ef1a7e1844b952a7f7521b'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/webkitgtk_6/2.40.1_x86_64/webkitgtk_6-2.40.1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    x86_64: '6f1f6309d27d15ba2040a6f0753c9c36e40ae213f9324dcfc4486e613c671bf7'
+    aarch64: '85ed089e4dc72c58ec3630ccfb7cfe2be614c5c4f3a49c367acd1d36ea34e0b1',
+     armv7l: '85ed089e4dc72c58ec3630ccfb7cfe2be614c5c4f3a49c367acd1d36ea34e0b1',
+     x86_64: '6878f94647d5b3337f1e6ebab2bd2a095ed870cf3bf5e8ebb4c5c67ebace73d0'
   })
 
   depends_on 'at_spi2_core' # R
   depends_on 'cairo'
-  # depends_on 'ccache' => :build
+  depends_on 'ccache' => :build
   depends_on 'dav1d'
   depends_on 'enchant' # R
   depends_on 'fontconfig'
@@ -26,6 +27,7 @@ class Webkitgtk_6 < Package
   depends_on 'gcc10' => :build
   depends_on 'gcc_lib' # R
   depends_on 'gdk_pixbuf' # R
+  depends_on 'glibc_lib' # R
   depends_on 'glibc' # R
   depends_on 'glib' # R
   depends_on 'gobject_introspection' => :build
@@ -39,18 +41,18 @@ class Webkitgtk_6 < Package
   depends_on 'icu4c' # R
   depends_on 'lcms' # R
   depends_on 'libavif' # R
+  depends_on 'libbacktrace' # R
   depends_on 'libdrm' # R
   depends_on 'libepoxy' # R
   depends_on 'libgcrypt' # R
   depends_on 'libglvnd' # R
-  depends_on 'libgpgerror' # R
-  depends_on 'libjpeg' # R
+  depends_on 'libgpg_error' # R
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libjxl' # R
   depends_on 'libnotify'
   depends_on 'libpng' # R
   depends_on 'libsecret' # R
-  depends_on 'libsoup'
-  depends_on 'libsoup2' # R
+  depends_on 'libsoup' # R
   depends_on 'libtasn1' # R
   depends_on 'libwebp' # R
   depends_on 'libwpe' # R
@@ -74,7 +76,7 @@ class Webkitgtk_6 < Package
   depends_on 'wayland' # R
   depends_on 'woff2' # R
   depends_on 'wpebackend_fdo' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   no_env_options
 
@@ -94,13 +96,13 @@ class Webkitgtk_6 < Package
       # WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-nonnull)
       # endif ()
 
-      #+    # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
-      #+    # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
-      #+    # https://bugs.webkit.org/show_bug.cgi?id=226557
-      #+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
-      #+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
-      #+    endif ()
-      #+
+      # +    # This triggers warnings in wtf/Packed.h, a header that is included in many places. It does not
+      # +    # respect ignore warning pragmas and we cannot easily suppress it for all affected files.
+      # +    # https://bugs.webkit.org/show_bug.cgi?id=226557
+      # +    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+      # +        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
+      # +    endif ()
+      # +
       ## -Wexpansion-to-defined produces false positives with GCC but not Clang
       ## https://bugs.webkit.org/show_bug.cgi?id=167643#c13
       # if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
@@ -138,7 +140,7 @@ class Webkitgtk_6 < Package
 
   def self.build
     # This builds webkit2gtk5 (which uses gtk4, but not libsoup2)
-    @workdir = `pwd`.chomp
+    @workdir = Dir.pwd
     # Bubblewrap sandbox breaks on epiphany with
     # bwrap: Can't make symlink at /var/run: File exists
     # LDFLAGS from debian: -Wl,--no-keep-memory
@@ -146,11 +148,10 @@ class Webkitgtk_6 < Package
       @arch_linker_flags = ARCH == 'x86_64' ? '' : '-Wl,--no-keep-memory'
       system "CREW_LINKER_FLAGS='#{@arch_linker_flags}' CC='#{@workdir}/bin/gcc' CXX='#{@workdir}/bin/g++' \
           cmake -B builddir -G Ninja \
-          #{CREW_CMAKE_FNO_LTO_OPTIONS.gsub('mold', 'gold').sub('-pipe', '-pipe -Wno-error').gsub('-fno-lto', '')} \
+          #{CREW_CMAKE_FNO_LTO_OPTIONS.gsub('-DCMAKE_LINKER_TYPE=MOLD', '').sub('-pipe', '-pipe -Wno-error').gsub('-fno-lto', '')} \
           -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
           -DENABLE_BUBBLEWRAP_SANDBOX=OFF \
           -DENABLE_DOCUMENTATION=OFF \
-          -DENABLE_GLES2=OFF \
           -DENABLE_JOURNALD_LOG=OFF \
           -DENABLE_GAMEPAD=OFF \
           -DENABLE_MINIBROWSER=ON \
@@ -163,7 +164,7 @@ class Webkitgtk_6 < Package
           -DUSER_AGENT_BRANDING='Chromebrew'"
     end
     @counter = 1
-    @counter_max = 5
+    @counter_max = 20
     loop do
       break if Kernel.system "#{CREW_NINJA} -C builddir -j #{CREW_NPROC}"
 
@@ -175,7 +176,7 @@ class Webkitgtk_6 < Package
   end
 
   def self.install
-    system "DESTDIR=/usr/local/tmp/crew/dest #{CREW_NINJA} -C builddir install"
+    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
     FileUtils.mv "#{CREW_DEST_PREFIX}/bin/WebKitWebDriver", "#{CREW_DEST_PREFIX}/bin/WebKitWebDriver_6"
   end
 end

@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_chardet < Package
+class Py3_chardet < Pip
   description 'Chardet is a universal encoding detector.'
   homepage 'https://github.com/chardet/chardet/'
-  @_ver = '4.0.0'
-  version "#{@_ver}-py3.11"
+  version "5.2.0-#{CREW_PY_VER}"
   license 'LGPL-2.1'
   compatibility 'all'
-  source_url 'https://github.com/chardet/chardet.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_chardet/4.0.0-py3.11_armv7l/py3_chardet-4.0.0-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_chardet/4.0.0-py3.11_armv7l/py3_chardet-4.0.0-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_chardet/4.0.0-py3.11_i686/py3_chardet-4.0.0-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_chardet/4.0.0-py3.11_x86_64/py3_chardet-4.0.0-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'e9a503a9cb01393a51871d6d504c27a7e74d5560a36f758e743c38407e736301',
-     armv7l: 'e9a503a9cb01393a51871d6d504c27a7e74d5560a36f758e743c38407e736301',
-       i686: 'de56e5463d15c0ac8efd4fe43c2fa9b92eede85db8267d5cf286a7feed76ab68',
-     x86_64: '3bcfb7009c40cd73c2e6ec803f4dd2cd4b9592bdb41a024fa192e8d963ad54ab'
+    aarch64: '73b4436b08a149fe17225a99e8b35aeafd1e4ef1653ed1479ba63abaaed67ff1',
+     armv7l: '73b4436b08a149fe17225a99e8b35aeafd1e4ef1653ed1479ba63abaaed67ff1',
+       i686: '4d9d0d12c29e69f190b891363950a29da500f6df007a71524c22612ea2f76687',
+     x86_64: 'bf3b2d46715c31fe3076b6835b2d77268b226714a775aa29ed97af53f06b3b78'
   })
 
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

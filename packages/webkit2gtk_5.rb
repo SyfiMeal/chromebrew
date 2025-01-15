@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'webkitgtk_6'
+Package.load_package("#{__dir__}/webkitgtk_6.rb")
 
 class Webkit2gtk_5 < Package
-  description Webkitgtk_6.description.to_s
-  homepage Webkitgtk_6.homepage.to_s
-  version Webkitgtk_6.version.to_s
-  license Webkitgtk_6.license.to_s
-  compatibility Webkitgtk_6.compatibility.to_s
+  description Webkitgtk_6.description
+  homepage Webkitgtk_6.homepage
+  version Webkitgtk_6.version
+  license Webkitgtk_6.license
+  compatibility Webkitgtk_6.compatibility
 
   is_fake
 

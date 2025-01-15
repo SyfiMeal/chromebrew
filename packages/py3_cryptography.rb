@@ -1,41 +1,28 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_cryptography < Package
+class Py3_cryptography < Pip
   description 'Cryptography provides cryptographic recipes and primitives to Python developers.'
   homepage 'https://cryptography.io/'
-  @_ver = '38.0.4'
-  version "#{@_ver}-py3.11"
+  version "44.0.0-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/pyca/cryptography.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cryptography/38.0.4-py3.11_armv7l/py3_cryptography-38.0.4-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cryptography/38.0.4-py3.11_armv7l/py3_cryptography-38.0.4-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cryptography/38.0.4-py3.11_i686/py3_cryptography-38.0.4-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_cryptography/38.0.4-py3.11_x86_64/py3_cryptography-38.0.4-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'b8c0219063f84c3a9b666afbe2625380cdb7505d903140cd978c8eab2f695215',
-     armv7l: 'b8c0219063f84c3a9b666afbe2625380cdb7505d903140cd978c8eab2f695215',
-       i686: '8869ebcc0faa36c11a855f4ecca89e82fbfeae3d41cde77990032acb7826bfc4',
-     x86_64: 'c4a588c27d2f363483a5f2d3746158c8919f8e29dab2232a1f3342f05567a980'
+    aarch64: '0a9ab365df58e161d26aac574d8df5b2d913dbe37d1ef8ec7df0c865a33297c4',
+     armv7l: '0a9ab365df58e161d26aac574d8df5b2d913dbe37d1ef8ec7df0c865a33297c4',
+       i686: '2f9b1a0c8e37530a154bc023998a6350cec2101c06206bdff8803eb634b5dd0d',
+     x86_64: '0d6b5394083bd0cbb285848bc8fba5c444546b3b7cf3f7c1ecdedf95b25a5a7e'
   })
 
-  depends_on 'py3_cffi'
-  depends_on 'py3_typing_extensions'
-  depends_on 'python3_rust' => :build
-  depends_on 'py3_pycparser' => :build
   depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
   depends_on 'openssl' # R
+  depends_on 'py3_cffi'
+  depends_on 'py3_pycparser' => :build
+  depends_on 'py3_typing_extensions'
+  depends_on 'rust' => :build
 
-  def self.build
-    system "SETUPTOOLS_SCM_PRETEND_VERSION=#{@_ver} python3 -m build #{PY3_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 -m installer #{PY3_INSTALLER_OPTIONS}"
-  end
+  no_source_build
 end

@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'ruby_asciidoctor'
+Package.load_package("#{__dir__}/ruby_asciidoctor.rb")
 
 class Asciidoctor < Package
-  description Ruby_asciidoctor.description.to_s
-  homepage Ruby_asciidoctor.homepage.to_s
-  version Ruby_asciidoctor.version.to_s
-  license Ruby_asciidoctor.license.to_s
-  compatibility Ruby_asciidoctor.compatibility.to_s
+  description Ruby_asciidoctor.description
+  homepage Ruby_asciidoctor.homepage
+  version Ruby_asciidoctor.version
+  license Ruby_asciidoctor.license
+  compatibility Ruby_asciidoctor.compatibility
 
   is_fake
 

@@ -1,36 +1,23 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_markupsafe < Package
+class Py3_markupsafe < Pip
   description 'Markupsafe allows the safe addition of untrusted strings to HTML/XML markup.'
   homepage 'https://markupsafe.palletsprojects.com/'
-  @_ver = '2.0.1'
-  version "#{@_ver}-py3.11"
+  version "3.0.2-#{CREW_PY_VER}"
   license 'BSD-3'
   compatibility 'all'
-  source_url 'https://github.com/pallets/markupsafe.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_markupsafe/2.0.1-py3.11_armv7l/py3_markupsafe-2.0.1-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_markupsafe/2.0.1-py3.11_armv7l/py3_markupsafe-2.0.1-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_markupsafe/2.0.1-py3.11_i686/py3_markupsafe-2.0.1-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_markupsafe/2.0.1-py3.11_x86_64/py3_markupsafe-2.0.1-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'ff24229b5e32308fdc3b5484d9bd978312f54dd801079d5d745d39225769ffdf',
-     armv7l: 'ff24229b5e32308fdc3b5484d9bd978312f54dd801079d5d745d39225769ffdf',
-       i686: '70a5a6f922b6baf91909af6c97541503a55e11f6a16f9824f59ad920dbf08ec1',
-     x86_64: 'db3fa2c7949b255ca644833c3c0c967cfc4d50f906f7088b1412a1764e637c9d'
+    aarch64: '6ac52d175f30d1c71cbe716666db37b38bda1aab902b4711fc65b0b4787e6e85',
+     armv7l: '6ac52d175f30d1c71cbe716666db37b38bda1aab902b4711fc65b0b4787e6e85',
+       i686: '3c7918bacfe87950e96e6c61bd7c01cba0e9eb001a2c8c5fa00044cb84b3d036',
+     x86_64: '49f99e35b905332c91f943412514275618af337f5b70ea89cc35246d2c3b53fd'
   })
 
-  depends_on 'python3' => :build
   depends_on 'glibc' # R
+  depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

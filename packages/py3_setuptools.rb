@@ -1,38 +1,36 @@
-require 'package'
+require 'buildsystems/python'
+require 'ptools'
 
-class Py3_setuptools < Package
+class Py3_setuptools < Python
   description 'Setuptools is the python build system from the Python Packaging Authority.'
   homepage 'https://setuptools.readthedocs.io/'
-  @_ver = '65.6.3'
-  version "#{@_ver}-py3.11"
+  version "75.8.0-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
   source_url 'https://github.com/pypa/setuptools.git'
-  git_hashtag "v#{@_ver}"
+  git_hashtag "v#{version.split('-').first}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_setuptools/65.6.3-py3.11_armv7l/py3_setuptools-65.6.3-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_setuptools/65.6.3-py3.11_armv7l/py3_setuptools-65.6.3-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_setuptools/65.6.3-py3.11_i686/py3_setuptools-65.6.3-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_setuptools/65.6.3-py3.11_x86_64/py3_setuptools-65.6.3-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'd357201c692981911586872b1d7f0b6900b886d13202a50aaedf91f02942db08',
-     armv7l: 'd357201c692981911586872b1d7f0b6900b886d13202a50aaedf91f02942db08',
-       i686: '876fc977e01a7d639adef3a9a7403813cf599f98d0c28d9d7d906d6fba73b34c',
-     x86_64: '483166d8742478f87585c5a10d10fafd5953dabb1c6e435d2c13d5bccebcd74a'
+    aarch64: 'c20645bac81a6b08eb6ff590490a9f10b8fa5cd2978dc5d64f56ac9e96285901',
+     armv7l: 'c20645bac81a6b08eb6ff590490a9f10b8fa5cd2978dc5d64f56ac9e96285901',
+       i686: 'fc3c921a2faeda4e660c4c5f12cdd7c32532d1ebbca5804b7ba9fc0b59f288ec',
+     x86_64: 'fe144a503f0122c60148d5298c90b9d781c94addc34d2be27f4b7da226de024d'
   })
 
-  depends_on 'python3', '< 3.11.0'
+  depends_on 'python3'
   depends_on 'py3_packaging'
 
   conflicts_ok
 
-  def self.build
-    system "SETUPTOOLS_SCM_PRETEND_VERSION=#{@_ver} python3 -m build #{PY3_BUILD_OPTIONS}"
+  def self.prebuild
+    if File.which('zstd')
+      system 'python3 -m pip uninstall setuptools -y', exception: false
+      system 'python3 -m pip install -I --force-reinstall --no-deps setuptools', exception: false
+    end
   end
 
-  def self.install
-    system "python3 -m installer #{PY3_INSTALLER_OPTIONS}"
+  def self.postremove
+    system 'python3 -m pip uninstall setuptools -y', exception: false if Kernel.system('which zstd', %i[out err] => File::NULL)
   end
 end

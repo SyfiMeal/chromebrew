@@ -3,19 +3,13 @@ require 'package'
 class Pcre2 < Package
   description 'The PCRE2 package contains a new generation of the Perl Compatible Regular Expression libraries.'
   homepage 'http://pcre.org/'
-  @_ver = '10.42'
-  version @_ver
+  version '10.42'
   license 'BSD-3'
   compatibility 'all'
   source_url 'https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.42/pcre2-10.42.tar.gz'
   source_sha256 'c33b418e3b936ee3153de2c61cc638e7e4fe3156022a5c77d0711bcbb9d64f1f'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre2/10.42_armv7l/pcre2-10.42-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre2/10.42_armv7l/pcre2-10.42-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre2/10.42_i686/pcre2-10.42-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre2/10.42_x86_64/pcre2-10.42-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: '880eb9d98a13f8532d61d6d414890ab3a5f40f3249d23f85ed097bc9d4650deb',
      armv7l: '880eb9d98a13f8532d61d6d414890ab3a5f40f3249d23f85ed097bc9d4650deb',
@@ -25,8 +19,8 @@ class Pcre2 < Package
 
   depends_on 'glibc' # R
   depends_on 'readline' # R
-  depends_on 'bz2' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'bzip2' # R
+  depends_on 'zlib' # R
 
   def self.build
     system "cmake -B builddir\

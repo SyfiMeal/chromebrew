@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'moreutils'
+Package.load_package("#{__dir__}/moreutils.rb")
 
 class Parallel < Package
   description 'Run multiple programs simultaneously. Bundled with moreutils.'
-  homepage Moreutils.homepage.to_s
-  version Moreutils.version.to_s
-  license Moreutils.license.to_s
-  compatibility Moreutils.compatibility.to_s
+  homepage Moreutils.homepage
+  version Moreutils.version
+  license Moreutils.license
+  compatibility Moreutils.compatibility
 
   is_fake
 

@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'curl'
+Package.load_package("#{__dir__}/curl.rb")
 
 class Libcurl < Package
-  description Curl.description.to_s
-  homepage Curl.homepage.to_s
-  version Curl.version.to_s
-  license Curl.license.to_s
-  compatibility Curl.compatibility.to_s
+  description Curl.description
+  homepage Curl.homepage
+  version Curl.version
+  license Curl.license
+  compatibility Curl.compatibility
 
   is_fake
 

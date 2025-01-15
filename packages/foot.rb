@@ -1,55 +1,43 @@
-# Adapted from Arch Linux foot PKGBUILD at:
-# https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=foot
+require 'buildsystems/meson'
 
-require 'package'
-
-class Foot < Package
+class Foot < Meson
   description 'Wayland terminal emulator - fast, lightweight and minimalistic'
   homepage 'https://codeberg.org/dnkl/foot'
-  version '1.13.1'
-  compatibility 'aarch64, armv7l, x86_64'
+  version '1.18.0'
+  license 'MIT'
+  compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://codeberg.org/dnkl/foot.git'
   git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/foot/1.13.1_armv7l/foot-1.13.1-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/foot/1.13.1_armv7l/foot-1.13.1-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/foot/1.13.1_x86_64/foot-1.13.1-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'a1c2d52499b3c842c1a9c01dfb14024cf435f37d88d53f4bff1a2741cee89e02',
-     armv7l: 'a1c2d52499b3c842c1a9c01dfb14024cf435f37d88d53f4bff1a2741cee89e02',
-     x86_64: '7586ac28caae7ffd3cb38e700f9455582d7a2a5e47e8e6bd7c78eb2c6a32c0de'
+    aarch64: '4d867d515e613a68f40d853474f56a62d68ce57b45c0e5b3541fe7fada81d4a7',
+     armv7l: '4d867d515e613a68f40d853474f56a62d68ce57b45c0e5b3541fe7fada81d4a7',
+     x86_64: 'b15f9dc468b2119adbfc2d41b34cae84a6cd8db639bface1fda065edbc5f51c4'
   })
 
-  depends_on 'libxkbcommon'
-  depends_on 'wayland'
-  depends_on 'pixman'
-  depends_on 'fontconfig'
-  depends_on 'utf8proc'
-  depends_on 'ncurses'
+  def self.patch
+    # threads.h was introduced in glibc 2.28. This is a workaround for pre-M92 systems.
+    return unless LIBC_VERSION < '2.28'
+    downloader 'https://raw.githubusercontent.com/jtsiomb/c11threads/3b0ee4127ff8e8d954d183c9acc06be9e32aecf2/c11threads.h', '9b8a21dc65ed4891eb4c469adaaa94955b365009b6b8d1858bd91378b0157865', 'threads.h'
+    FileUtils.cp('threads.h', 'tests')
+  end
+
   depends_on 'fcft'
-  depends_on 'wayland_protocols' => :build
-  depends_on 'tllist' => :build
+  depends_on 'fontconfig'
   depends_on 'freetype' # R
-  depends_on 'glibc' # R
-  depends_on 'harfbuzz' # R
   depends_on 'gcc_lib' # R
+  depends_on 'glibc' # R
+  depends_on 'glibc_lib' # R
+  depends_on 'harfbuzz' # R
+  depends_on 'libxkbcommon'
+  depends_on 'ncurses'
+  depends_on 'pixman'
+  depends_on 'tllist' => :build
+  depends_on 'utf8proc'
+  depends_on 'wayland'
+  depends_on 'wayland_protocols' => :build
 
-  def self.preflight
-    abort 'Foot requires glibc > 2.28.' if Gem::Version.new(LIBC_VERSION.to_s) < Gem::Version.new('2.28')
-  end
-
-  def self.build
-    system "meson setup #{CREW_MESON_OPTIONS} \
-      -Dterminfo=disabled \
-      -Dthemes=false \
-      builddir"
-    system 'meson configure builddir'
-    system 'ninja -C builddir'
-  end
-
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
-  end
+  # https://codeberg.org/dnkl/foot/issues/1789
+  meson_options '-Dwerror=false'
 end

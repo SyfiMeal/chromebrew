@@ -1,35 +1,21 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Automake < Package
+class Automake < Autotools
   description 'Automake is a tool for automatically generating Makefile.in files compliant with the GNU Coding Standards.'
   homepage 'https://www.gnu.org/software/automake/'
-  version '1.16.5'
+  version '1.17'
   license 'GPL-2'
   compatibility 'all'
-  source_url 'https://ftpmirror.gnu.org/gnu/automake/automake-1.16.5.tar.xz'
+  source_url "https://ftpmirror.gnu.org/gnu/automake/automake-#{version}.tar.xz"
   source_sha256 'f01d58cd6d9d77fbdca9eb4bbd5ead1988228fdb73d6f7a201f5f8d6b118b469'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/automake/1.16.5_armv7l/automake-1.16.5-chromeos-armv7l.tar.xz',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/automake/1.16.5_armv7l/automake-1.16.5-chromeos-armv7l.tar.xz',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/automake/1.16.5_i686/automake-1.16.5-chromeos-i686.tar.xz',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/automake/1.16.5_x86_64/automake-1.16.5-chromeos-x86_64.tar.xz'
-  })
   binary_sha256({
-    aarch64: 'b991366b2b59e1c6bdbce17789552240019d7e4d175661dacf3533a66e584037',
-     armv7l: 'b991366b2b59e1c6bdbce17789552240019d7e4d175661dacf3533a66e584037',
-       i686: '08227a2c5b0151e3b854577c292647472b3c961659b66a5ba7652c2cdffd8be2',
-     x86_64: '110762775901383e1f8eee7cd7cd621afdf0c1a417a903ca01f27db6274d01ff'
+    aarch64: '7a811c20ed1cccfa17f78d2fc20a742765354d37eaa5d889a26b2abaae036bbb',
+     armv7l: '7a811c20ed1cccfa17f78d2fc20a742765354d37eaa5d889a26b2abaae036bbb',
+       i686: '0487cf58b02db8a932cb4c8691460d8f3034d154d9905e23be5ab96f442c0445',
+     x86_64: 'e5bd0e72355c5aaaed40a118f253fe3004cb44a8f7325f79708820b4596d396a'
   })
 
   depends_on 'autoconf'
-
-  def self.build
-    system "#{CREW_ENV_OPTIONS} ./configure #{CREW_OPTIONS}"
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
 end

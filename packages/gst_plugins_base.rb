@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'gstreamer'
+Package.load_package("#{__dir__}/gstreamer.rb")
 
 class Gst_plugins_base < Package
   description 'An essential, exemplary set of elements for GStreamer'
   homepage 'https://gstreamer.freedesktop.org/modules/gst-plugins-base.html'
-  version Gstreamer.version.to_s
-  license Gstreamer.license.to_s
-  compatibility Gstreamer.compatibility.to_s
+  version Gstreamer.version
+  license Gstreamer.license
+  compatibility Gstreamer.compatibility
 
   is_fake
 

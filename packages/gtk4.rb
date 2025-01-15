@@ -1,24 +1,19 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Gtk4 < Package
+class Gtk4 < Meson
   description 'GTK+ is a multi-platform toolkit for creating graphical user interfaces.'
   homepage 'https://developer.gnome.org/gtk4/'
-  @_ver = '4.10.4'
-  version @_ver
+  version '4.17.2'
   license 'LGPL-2.1'
   compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.gnome.org/GNOME/gtk.git'
-  git_hashtag @_ver
+  git_hashtag version
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gtk4/4.10.4_armv7l/gtk4-4.10.4-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gtk4/4.10.4_armv7l/gtk4-4.10.4-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gtk4/4.10.4_x86_64/gtk4-4.10.4-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '6cce02639e276e90d691968194a672d96546387cea423b6bb4e936af9edd3ed6',
-     armv7l: '6cce02639e276e90d691968194a672d96546387cea423b6bb4e936af9edd3ed6',
-     x86_64: '430e515ecaf3aec786a2062acfaa1cd451a1fd6a3d2e764816df1d9a709d2391'
+    aarch64: '5187d4d52a77dae8249bf33ed7e43f7f5068cbb1ab2e4e8c2096067b1aa09d18',
+     armv7l: '5187d4d52a77dae8249bf33ed7e43f7f5068cbb1ab2e4e8c2096067b1aa09d18',
+     x86_64: 'aa432fc6384b5743a94673537d533c11b74174a900b756ef2938e3a922347730'
   })
 
   # L = Logical Dependency, R = Runtime Dependency
@@ -35,18 +30,20 @@ class Gtk4 < Package
   depends_on 'ghostscript' => :build
   depends_on 'glibc' # R
   depends_on 'glib' # R
-  depends_on 'gnome_icon_theme' # L
+  depends_on 'glslang' => :build
+  # depends_on 'gnome_icon_theme' # L
   depends_on 'gobject_introspection' => :build
   depends_on 'graphene' # R
-  depends_on 'gstreamer' # R
+  # depends_on 'gstreamer' # R Let's avoid the glibc 2.29 dep.
   depends_on 'harfbuzz' # R
   depends_on 'hicolor_icon_theme' # L
   depends_on 'intel_media_sdk' => :build if ARCH.eql?('x86_64')
   depends_on 'iso_codes' => :build
   depends_on 'libcloudproviders' # R
   depends_on 'libepoxy' # R
-  depends_on 'libjpeg' # R
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libpng' # R
+  depends_on 'librsvg' # L
   depends_on 'libsass' => :build
   depends_on 'libspectre' => :build
   depends_on 'libtiff' # R
@@ -63,9 +60,11 @@ class Gtk4 < Package
   depends_on 'libxrender' # R
   depends_on 'mesa' => :build
   depends_on 'pango' # R
+  depends_on 'py3_docutils' => :build
   depends_on 'py3_gi_docgen' => :build
   depends_on 'py3_pygments' => :build
   depends_on 'sassc' => :build
+  depends_on 'shaderc' => :build
   depends_on 'shared_mime_info' # L
   depends_on 'sommelier' # L
   depends_on 'valgrind' => :build
@@ -73,7 +72,7 @@ class Gtk4 < Package
   depends_on 'vulkan_icd_loader' # R
   depends_on 'wayland' # R
   depends_on 'xdg_base' # L
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   gnome
   no_fhs
@@ -86,23 +85,21 @@ class Gtk4 < Package
     end
   end
 
-  def self.build
-    system "mold -run meson setup #{CREW_MESON_OPTIONS} \
-      -Dbroadway-backend=true \
+  meson_options '-Dbroadway-backend=false \
+      -Dbuild-demos=false \
       -Dbuild-examples=false \
       -Dbuild-tests=false \
       -Dbuild-testsuite=false \
-      -Ddemos=false \
-      -Dintrospection=enabled \
-      -Dgraphene:default_library=both \
-      -Dlibsass:default_library=both \
-      -Dmutest:default_library=both \
       -Dcloudproviders=enabled \
-      -Dvulkan=enabled \
+      -Dgraphene:default_library=both \
+      -Dintrospection=enabled \
+      -Dlibsass:default_library=both \
+      -Dmedia-gstreamer=disabled \
+      -Dmutest:default_library=both \
       -Dprint-cups=auto \
-      builddir"
-    system 'meson configure builddir'
-    system "#{CREW_NINJA} -C builddir"
+      -Dvulkan=enabled'
+
+  meson_build_extras do
     File.write 'gtk4settings', <<~GTK4_CONFIG_HEREDOC
       [Settings]
       gtk-icon-theme-name = Adwaita
@@ -111,9 +108,8 @@ class Gtk4 < Package
     GTK4_CONFIG_HEREDOC
   end
 
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
-    @xdg_config_dest_home = "#{CREW_DEST_PREFIX}/.config"
-    FileUtils.install 'gtk4settings', "#{@xdg_config_dest_home}/gtk-4.0/settings.ini", mode: 0o644
+  meson_install_extras do
+    xdg_config_dest_home = File.join(CREW_DEST_PREFIX, '.config')
+    FileUtils.install 'gtk4settings', "#{xdg_config_dest_home}/gtk-4.0/settings.ini", mode: 0o644
   end
 end

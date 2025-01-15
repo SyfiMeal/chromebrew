@@ -3,19 +3,13 @@ require 'package'
 class Pcre < Package
   description 'The PCRE library is a set of functions that implement regular expression pattern matching using the same syntax and semantics as Perl 5.'
   homepage 'http://pcre.org/'
-  @_ver = '8.45'
-  version @_ver
+  version '8.45'
   license 'BSD-3'
   compatibility 'all'
   source_url 'https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.bz2'
   source_sha256 '4dae6fdcd2bb0bb6c37b5f97c33c2be954da743985369cddac3546e3218bffb8'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre/8.45_armv7l/pcre-8.45-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre/8.45_armv7l/pcre-8.45-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre/8.45_i686/pcre-8.45-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/pcre/8.45_x86_64/pcre-8.45-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: '925da859f7c9b10946cdbd731549de593a7990a1d73f24dc683512d60aea4b2e',
      armv7l: '925da859f7c9b10946cdbd731549de593a7990a1d73f24dc683512d60aea4b2e',
@@ -28,7 +22,7 @@ class Pcre < Package
   depends_on 'readline' # R
 
   def self.build
-    system "./configure #{CREW_OPTIONS} \
+    system "./configure #{CREW_CONFIGURE_OPTIONS} \
       --enable-shared \
       --with-pic \
       --enable-unicode-properties \

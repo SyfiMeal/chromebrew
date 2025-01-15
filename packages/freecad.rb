@@ -1,22 +1,22 @@
 require 'package'
+require 'misc_functions'
 
 class Freecad < Package
   description 'A free and opensource multiplatform 3D parametric modeler.'
-  homepage 'https://www.freecadweb.org/'
-  version '0.19.2'
+  homepage 'https://www.freecad.org/'
+  version '1.0.0'
   license 'GPL-2'
   compatibility 'x86_64'
-  source_url 'https://github.com/FreeCAD/FreeCAD/releases/download/0.19.2/FreeCAD_0.19-24291-Linux-Conda_glibc2.12-x86_64.AppImage'
-  source_sha256 'c196a6e59349ed452cc9b9af2c6a0d983a698831630aa5c7077565ed8570c9ad'
+  source_url "https://github.com/FreeCAD/FreeCAD/releases/download/#{version}/FreeCAD_#{version}-conda-Linux-x86_64-py311.AppImage"
+  source_sha256 '4b1c53e7f444a7897875064e059be84c0ebb8848dd58bc034dcdd1ccc407dbc7'
 
-  binary_url({})
-  binary_sha256({})
+  no_compile_needed
+  no_shrink
 
   depends_on 'sommelier'
 
   def self.preflight
-    free_space = `echo $(($(stat -f --format="%a*%S" .)))`.chomp.to_i
-    abort 'Not enough free disk space.  You need at least 5.2 GB to install.'.lightred if free_space < 5583457485
+    MiscFunctions.check_free_disk_space(5583457485)
   end
 
   def self.patch
@@ -24,36 +24,26 @@ class Freecad < Package
   end
 
   def self.build
-    @freecad = <<~EOF
+    File.write 'freecad.sh', <<~EOF
       #!/bin/bash
       cd #{CREW_PREFIX}/share/freecad
       ./AppRun "$@"
     EOF
-    File.write('freecad.sh', @freecad)
   end
 
   def self.install
-    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/bin"
-    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/freecad"
     FileUtils.install 'freecad.sh', "#{CREW_DEST_PREFIX}/bin/freecad", mode: 0o755
-    FileUtils.mv Dir.glob('*'), "#{CREW_DEST_PREFIX}/share/freecad"
+    FileUtils.mkdir_p "#{CREW_DEST_PREFIX}/share/freecad"
+    FileUtils.mv Dir['*'], "#{CREW_DEST_PREFIX}/share/freecad"
   end
 
   def self.postinstall
-    puts "\nType 'freecad' to get started.\n".lightblue
+    ExitMessage.add "\nType 'freecad' to get started.\n"
   end
 
-  def self.remove
-    config_dir = "#{HOME}/.FreeCAD"
-    if Dir.exist? config_dir.to_s
-      print "\nWould you like to remove #{config_dir}? [y/N] "
-      case $stdin.gets.chomp.downcase
-      when 'y', 'yes'
-        FileUtils.rm_rf config_dir.to_s
-        puts "#{config_dir} removed.".lightred
-      else
-        puts "#{config_dir} saved.".lightgreen
-      end
-    end
+  def self.postremove
+    Package.agree_to_remove("#{CREW_PREFIX}/.cache/FreeCAD")
+    Package.agree_to_remove("#{CREW_PREFIX}/.config/FreeCAD")
+    Package.agree_to_remove("#{CREW_PREFIX}/.config/.local/share/FreeCAD")
   end
 end

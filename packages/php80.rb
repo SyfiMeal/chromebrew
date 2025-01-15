@@ -2,50 +2,73 @@ require 'package'
 
 class Php80 < Package
   description 'PHP is a popular general-purpose scripting language that is especially suited to web development.'
-  homepage 'http://www.php.net/'
-  version '8.0.28'
+  homepage 'https://www.php.net/'
+  version '8.0.30-1'
   license 'PHP-3.01'
-  compatibility 'all'
-  source_url 'https://www.php.net/distributions/php-8.0.28.tar.xz'
-  source_sha256 '5e07278a1f315a67d36a676c01343ca2d4da5ec5bdb15d018e4248b3012bc0cd'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url 'https://www.php.net/distributions/php-8.0.30.tar.xz'
+  source_sha256 '216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/php80/8.0.28_armv7l/php80-8.0.28-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/php80/8.0.28_armv7l/php80-8.0.28-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/php80/8.0.28_i686/php80-8.0.28-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/php80/8.0.28_x86_64/php80-8.0.28-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '742b7cdfc06c40a84e6d92e39a81e5d4b072f3b083ed86873459a5f95adb8492',
-     armv7l: '742b7cdfc06c40a84e6d92e39a81e5d4b072f3b083ed86873459a5f95adb8492',
-       i686: '544f70d48329958ecf2706e7d2c41a74433ea6f185862b2904bd6899df4ebd85',
-     x86_64: '8e3974cf4c7359a28d22143f926e7b050014a4f6ce0d2374f29cb3f593101a6f'
+    aarch64: '717c0f9b62d8595ac26209550d6853e2b6aeaa809ff590ed8f95a1ab2a4e1b48',
+     armv7l: '717c0f9b62d8595ac26209550d6853e2b6aeaa809ff590ed8f95a1ab2a4e1b48',
+     x86_64: '4d9aefd3ae620d976b959d4fa30f2935140d203393818dcd6fa66c3c3676c3b4'
   })
 
   depends_on 'aspell_en'
+  depends_on 'aspell' # R
+  depends_on 'brotli' # R
+  depends_on 'bzip2' # R
+  depends_on 'c_ares' # R
   depends_on 'curl'
-  depends_on 'libgcrypt'
-  depends_on 'libjpeg'
-  depends_on 'libpng'
-  depends_on 'libsodium'
-  depends_on 'libxpm'
-  depends_on 'libxslt'
-  depends_on 'libzip'
+  depends_on 'e2fsprogs' # R
   depends_on 'exif'
   depends_on 'freetds'
   depends_on 'freetype'
+  depends_on 'gcc_lib' # R
+  depends_on 'gdbm' # R
+  depends_on 'glibc' # R
+  depends_on 'gmp' # R
   depends_on 'graphite'
+  depends_on 'icu4c' # R
+  depends_on 'krb5' # R
+  depends_on 'libcyrussasl' # R
+  depends_on 'libedit' # R
+  depends_on 'libffi' # R
+  depends_on 'libgcrypt'
+  depends_on 'libgpg_error' # R
+  depends_on 'libidn2' # R
+  depends_on 'libjpeg_turbo'
+  depends_on 'libnghttp2' # R
+  depends_on 'libpng'
+  depends_on 'libpsl' # R
+  depends_on 'libsodium'
+  depends_on 'libssh' # R
+  depends_on 'libtool' # R
+  depends_on 'libunistring' # R
+  depends_on 'libxml2' # R
+  depends_on 'libxpm'
+  depends_on 'libxslt'
+  depends_on 'libzip'
+  depends_on 'ncurses' # R
+  depends_on 'oniguruma'
+  depends_on 'openldap' # R
+  depends_on 'openssl111' # R
+  depends_on 'openssl' # R
+  depends_on 'py3_pygments'
   depends_on 're2c'
+  depends_on 'sqlite' # R
   depends_on 'tidy'
   depends_on 'unixodbc'
-  depends_on 'oniguruma'
-  depends_on 'py3_pygments'
+  depends_on 'zlib' # R
+  depends_on 'zstd' # R
 
   no_fhs
 
   def self.preflight
     phpver = `php -v 2> /dev/null | head -1 | cut -d' ' -f2`.chomp
-    abort "PHP version #{phpver} already installed.".lightgreen if ARGV[0] != 'reinstall' && @_ver != phpver && !phpver.empty?
+    abort "PHP version #{phpver} already installed.".lightgreen if ARGV[0] != 'reinstall' && version != phpver && !phpver.empty?
   end
 
   def self.patch

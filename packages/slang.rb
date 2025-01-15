@@ -8,13 +8,8 @@ class Slang < Package
   compatibility 'all'
   source_url 'https://www.jedsoft.org/releases/slang/slang-2.3.3.tar.bz2'
   source_sha256 'f9145054ae131973c61208ea82486d5dd10e3c5cdad23b7c4a0617743c8f5a18'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/slang/2.3.3_armv7l/slang-2.3.3-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/slang/2.3.3_armv7l/slang-2.3.3-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/slang/2.3.3_i686/slang-2.3.3-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/slang/2.3.3_x86_64/slang-2.3.3-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: '880cf91fde278118fc476633095172a1e7b6d4beb0f87fbd13cfc9a294320509',
      armv7l: '880cf91fde278118fc476633095172a1e7b6d4beb0f87fbd13cfc9a294320509',
@@ -25,11 +20,11 @@ class Slang < Package
   depends_on 'glibc' # R
   depends_on 'libpng' # R
   depends_on 'pcre' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
   depends_on 'gcc_lib' # R
 
   def self.build
-    system "mold -run ./configure #{CREW_OPTIONS} --without-x"
+    system "mold -run ./configure #{CREW_CONFIGURE_OPTIONS} --without-x"
 
     # force to compile in sequential since slang Makefile doesn't work in parallel
     system 'make', '-j1'

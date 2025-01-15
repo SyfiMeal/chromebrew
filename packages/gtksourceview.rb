@@ -1,14 +1,14 @@
 require 'package'
-require_relative 'gtksourceview_3'
-require_relative 'gtksourceview_4'
-require_relative 'gtksourceview_5'
+Package.load_package("#{__dir__}/gtksourceview_3.rb")
+Package.load_package("#{__dir__}/gtksourceview_4.rb")
+Package.load_package("#{__dir__}/gtksourceview_5.rb")
 
 class Gtksourceview < Package
-  description Gtksourceview_3.description.to_s
-  homepage Gtksourceview_3.homepage.to_s
+  description Gtksourceview_3.description
+  homepage Gtksourceview_3.homepage
   version "#{Gtksourceview_3.version}+#{Gtksourceview_4.version}+#{Gtksourceview_5.version}"
-  license Gtksourceview_3.license.to_s
-  compatibility Gtksourceview_3.compatibility.to_s
+  license Gtksourceview_3.license
+  compatibility Gtksourceview_3.compatibility
 
   is_fake
 

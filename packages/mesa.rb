@@ -1,24 +1,19 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Mesa < Package
+class Mesa < Meson
   description 'Open-source implementation of the OpenGL specification'
   homepage 'https://www.mesa3d.org'
-  @_ver = '23.1.2'
-  version "#{@_ver}-llvm16"
+  version '24.3.3-llvm19'
   license 'MIT'
   compatibility 'x86_64 aarch64 armv7l'
   source_url 'https://gitlab.freedesktop.org/mesa/mesa.git'
-  git_hashtag "mesa-#{@_ver}"
+  git_hashtag "mesa-#{version.split('-')[0..-2].join('-')}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/mesa/23.1.2-llvm16_armv7l/mesa-23.1.2-llvm16-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/mesa/23.1.2-llvm16_armv7l/mesa-23.1.2-llvm16-chromeos-armv7l.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/mesa/23.1.2-llvm16_x86_64/mesa-23.1.2-llvm16-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'd77ffd9619033453c4f25a932064a01bb572ae1acf9e2ca5145cbd742d8ac001',
-     armv7l: 'd77ffd9619033453c4f25a932064a01bb572ae1acf9e2ca5145cbd742d8ac001',
-     x86_64: '3fb6eb2a105103ff898b63c66395e67e97abfe70bec57597d54a3a46fedff2db'
+    aarch64: '9758f1df2734a26ee0bad78bca754f8ea6dd8384e90768a23863d9216d4b53a2',
+     armv7l: '9758f1df2734a26ee0bad78bca754f8ea6dd8384e90768a23863d9216d4b53a2',
+     x86_64: 'f5fd7adfae333652099c36d67c3c4cef26fc1b11a349160b4805339375f5e936'
   })
 
   depends_on 'elfutils' # R
@@ -26,13 +21,14 @@ class Mesa < Package
   depends_on 'expat' # R
   depends_on 'gcc_dev' => :build
   depends_on 'gcc_lib' # R
+  depends_on 'glibc_lib' # R
   depends_on 'glibc' # R
   depends_on 'glslang' => :build
+  depends_on 'libclc' => :build
   depends_on 'libdrm' # R
-  depends_on 'libglvnd' # R
   depends_on 'libomxil_bellagio' => :build
-  depends_on 'libunwind'
-  depends_on 'libva' => :build # Enable only during build to avoid circular dep.
+  depends_on 'libunwind' # R
+  depends_on 'libva' => :build
   depends_on 'libvdpau' => :build
   depends_on 'libx11' # R
   depends_on 'libxcb' # R
@@ -43,45 +39,38 @@ class Mesa < Package
   depends_on 'libxrandr' # R
   depends_on 'libxshmfence' # R
   depends_on 'libxv' => :build
-  depends_on 'libxvmc' # R
-  depends_on 'libxv' # R
   depends_on 'libxxf86vm' # R
-  depends_on 'llvm_dev16' => :build
-  depends_on 'llvm_lib16' # R
+  depends_on 'llvm19_dev' => :build
+  depends_on 'llvm19_lib' # R
   depends_on 'lm_sensors' # R
-  depends_on 'py3_mako'
+  depends_on 'py3_mako' => :build
+  depends_on 'py3_ply' => :build
+  depends_on 'py3_pycparser' => :build
+  depends_on 'spirv_llvm_translator' => :build
+  depends_on 'spirv_tools' # R
   depends_on 'valgrind' => :build
   depends_on 'vulkan_headers' => :build
-  depends_on 'vulkan_icd_loader' => :build
-  depends_on 'vulkan_icd_loader' # R
   depends_on 'wayland_protocols' => :build
   depends_on 'wayland' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'xcb_util_keysyms' # R
+  depends_on 'zlib' # R
   depends_on 'zstd' # R
 
-  def self.build
-    @gallium_drivers = ARCH == 'x86_64' ? 'i915,r300,r600,radeonsi,nouveau,virgl,svga,swrast,iris,crocus,zink' : 'auto'
-    @vulkan_drivers = ARCH == 'x86_64' ? 'amd, intel, intel_hasvk, swrast' : 'auto'
-    system "mold -run meson setup #{CREW_MESON_OPTIONS.gsub('-mfpu=vfpv3-d16', '-mfpu=neon-fp16')} \
-      -Db_asneeded=false \
-      -Ddri3=enabled \
-      -Degl=enabled \
-      -Dgbm=enabled \
-      -Dgles1=disabled \
-      -Dgles2=enabled \
-      -Dglvnd=true \
-      -Dglx=dri \
-      -Dllvm=enabled \
-      -Dgallium-drivers='#{@gallium_drivers}' \
-      -Dvulkan-drivers='#{@vulkan_drivers}' \
-      -Dvideo-codecs='vc1dec,h264dec,h264enc,h265dec,h265enc' \
-       builddir"
-    system 'meson configure builddir'
-    system "mold -run #{CREW_NINJA} -C builddir"
-  end
+  meson_options "#{CREW_MESON_OPTIONS.gsub('-mfpu=vfpv3-d16', '-mfpu=neon-fp16')} \
+    -Db_asneeded=false \
+    -Degl=enabled \
+    -Dgbm=enabled \
+    -Dgles1=disabled \
+    -Dgles2=enabled \
+    -Dglvnd=enabled \
+    -Dglx=dri \
+    -Dintel-clc=enabled \
+    -Dllvm=enabled \
+    -Dgallium-drivers='#{ARCH == 'x86_64' ? 'i915,r300,r600,radeonsi,nouveau,virgl,svga,softpipe,llvmpipe,iris,crocus,zink' : 'v3d,freedreno,etnaviv,nouveau,svga,tegra,virgl,lima,panfrost,softpipe,llvmpipe,iris,zink'}' \
+    -Dvulkan-drivers='#{ARCH == 'x86_64' ? 'amd, intel, intel_hasvk, swrast' : 'auto'}' \
+    -Dvideo-codecs='all'"
 
-  def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
+  meson_install_extras do
     # The following are hacks to keep sommelier from complaining.
     Dir.chdir("#{CREW_DEST_LIB_PREFIX}/dri") do
       FileUtils.ln_s '.', 'tls' unless File.exist?('tls')

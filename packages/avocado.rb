@@ -1,12 +1,12 @@
 require 'package'
-require_relative 'avocado_framework'
+Package.load_package("#{__dir__}/avocado_framework.rb")
 
 class Avocado < Package
-  description Avocado_framework.description.to_s
-  homepage Avocado_framework.homepage.to_s
-  version Avocado_framework.version.to_s
-  license Avocado_framework.license.to_s
-  compatibility Avocado_framework.compatibility.to_s
+  description Avocado_framework.description
+  homepage Avocado_framework.homepage
+  version Avocado_framework.version
+  license Avocado_framework.license
+  compatibility Avocado_framework.compatibility
 
   is_fake
 

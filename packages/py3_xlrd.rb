@@ -1,35 +1,22 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_xlrd < Package
+class Py3_xlrd < Pip
   description 'XLRD is a library to extract data from Microsoft Excel (tm) spreadsheet files.'
   homepage 'https://xlrd.readthedocs.io/'
-  @_ver = '2.0.1'
-  version "#{@_ver}-py3.11"
+  version "2.0.1-#{CREW_PY_VER}"
   license 'BSD'
   compatibility 'all'
-  source_url 'https://github.com/python-excel/xlrd.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_xlrd/2.0.1-py3.11_armv7l/py3_xlrd-2.0.1-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_xlrd/2.0.1-py3.11_armv7l/py3_xlrd-2.0.1-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_xlrd/2.0.1-py3.11_i686/py3_xlrd-2.0.1-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_xlrd/2.0.1-py3.11_x86_64/py3_xlrd-2.0.1-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '1e221d3e49befd5b271887be44b7e4bd8c946c2e1cba5b4a6c0370b0e67d69c3',
-     armv7l: '1e221d3e49befd5b271887be44b7e4bd8c946c2e1cba5b4a6c0370b0e67d69c3',
-       i686: '9d2f7fbbcc6d0db1823eb3c0b45dab58807775ba76a7ad7dbf26fc493f9b34a6',
-     x86_64: 'ddeb2ca4c1e6b8ef5e45d240b2e8f7425a04d5bcba534868dd083950f8edc819'
+    aarch64: 'e1a02ad5ed55435cb09572710171bb9046e2d29e8caec211bd0619b75629d068',
+     armv7l: 'e1a02ad5ed55435cb09572710171bb9046e2d29e8caec211bd0619b75629d068',
+       i686: '5d40727569aa1537230137df8015048982872482c1eee2322f31e6cefca3fab3',
+     x86_64: 'f242f03e316d62a71e228401502c6fa392a96a8b0ba7815ccd055bac7ee8477c'
   })
 
   depends_on 'python3' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

@@ -2,33 +2,35 @@ require 'package'
 
 class Powershell < Package
   description 'Powershell is a cross-platform, task-based command-line shell and scripting language that helps rapidly automate tasks that manage operating systems and processes'
-  homepage 'https://docs.microsoft.com/en-us/powershell/'
-  version '7.3.3'
+  homepage 'https://learn.microsoft.com/en-us/powershell/'
+  version '7.4.6'
   license 'MIT'
-  compatibility 'aarch64,armv7l,x86_64'
+  compatibility 'x86_64 aarch64 armv7l'
 
   source_url({
-    aarch64: 'https://github.com/PowerShell/PowerShell/releases/download/v7.3.3/powershell-7.3.3-linux-arm32.tar.gz',
-     armv7l: 'https://github.com/PowerShell/PowerShell/releases/download/v7.3.3/powershell-7.3.3-linux-arm32.tar.gz',
-     x86_64: 'https://github.com/PowerShell/PowerShell/releases/download/v7.3.3/powershell-7.3.3-linux-x64.tar.gz'
+    aarch64: "https://github.com/PowerShell/PowerShell/releases/download/v#{version}/powershell-#{version}-linux-arm32.tar.gz",
+     armv7l: "https://github.com/PowerShell/PowerShell/releases/download/v#{version}/powershell-#{version}-linux-arm32.tar.gz",
+     x86_64: "https://github.com/PowerShell/PowerShell/releases/download/v#{version}/powershell-#{version}-linux-x64.tar.gz"
   })
   source_sha256({
-    aarch64: '8f10ade3bd12a21fba51bcaaecb12b79cb11092725ac0f7c7e6947c053053766',
-     armv7l: '8f10ade3bd12a21fba51bcaaecb12b79cb11092725ac0f7c7e6947c053053766',
-     x86_64: '478320f62c9bec5765414b82b4086310777bf95ab2fc2310b2db6cbc253b40b4'
+    aarch64: 'a3a5b116c7eec98e3c11b152dc62f62fa4f660a70ccb33d3604158de821c268e',
+     armv7l: 'a3a5b116c7eec98e3c11b152dc62f62fa4f660a70ccb33d3604158de821c268e',
+     x86_64: '6f6015203c47806c5cc444c19d8ed019695e610fbd948154264bf9ca8e157561'
   })
 
   depends_on 'xdg_base'
 
   no_compile_needed
+  no_shrink
 
   def self.install
     FileUtils.mkdir_p %W[#{CREW_DEST_PREFIX}/bin #{CREW_DEST_PREFIX}/share/powershell]
-    FileUtils.cp_r '.', "#{CREW_DEST_PREFIX}/share/powershell"
+    FileUtils.cp_r Dir['*'], "#{CREW_DEST_PREFIX}/share/powershell"
+    FileUtils.chmod 0o755, "#{CREW_DEST_PREFIX}/share/powershell/pwsh"
     FileUtils.ln_s "#{CREW_PREFIX}/share/powershell/pwsh", "#{CREW_DEST_PREFIX}/bin/pwsh"
   end
 
   def self.postinstall
-    puts "\nTo get started, execute 'pwsh'.\n".lightblue
+    ExitMessage.add "\nTo get started, execute 'pwsh'.\n"
   end
 end

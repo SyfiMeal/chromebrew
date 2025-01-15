@@ -1,41 +1,24 @@
-require 'package'
+require 'buildsystems/autotools'
 
-class Libnftnl < Package
+class Libnftnl < Autotools
   description 'libnftnl is a userspace library providing a low-level netlink programming interface (API) to the in-kernel nf_tables subsystem.'
   homepage 'https://netfilter.org/projects/libnftnl/'
   license 'GPL-2'
-  version '1.2.5'
+  version '1.2.8'
   compatibility 'all'
-  source_url 'https://netfilter.org/projects/libnftnl/files/libnftnl-1.2.5.tar.xz'
-  source_sha256 '966de0a8120c8a53db859889749368bfb2cba0c4f0b4c1a30d264eccc45f1226'
+  source_url "https://netfilter.org/projects/libnftnl/files/libnftnl-#{version}.tar.xz"
+  source_sha256 '37fea5d6b5c9b08de7920d298de3cdc942e7ae64b1a3e8b880b2d390ae67ad95'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libnftnl/1.2.5_armv7l/libnftnl-1.2.5-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libnftnl/1.2.5_armv7l/libnftnl-1.2.5-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libnftnl/1.2.5_i686/libnftnl-1.2.5-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/libnftnl/1.2.5_x86_64/libnftnl-1.2.5-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '2466837daabd1954e66a0032ee1fe14feac173bb03d5e4b1ba0e1e001169832c',
-     armv7l: '2466837daabd1954e66a0032ee1fe14feac173bb03d5e4b1ba0e1e001169832c',
-       i686: '19843a030252288ea8e7c44e29915d4ac2d01d55858a41120712162e5972e14a',
-     x86_64: '00d251006611eb159fc38fb38c572e7a4aba843042e40b8d8f414b000f18040b'
+    aarch64: '7c093a2a0cbee0292fb2e0d41bc54181b79e8105bbebb076782a9c160c6d6006',
+     armv7l: '7c093a2a0cbee0292fb2e0d41bc54181b79e8105bbebb076782a9c160c6d6006',
+       i686: 'c003b4116ed6c4a5e2f9abc8400f96a4312e16446d957a0a3f2865541b2cb982',
+     x86_64: '2a276eb55a9671e9314dd161e5605e8719222ff37b4beda1668614816309686f'
   })
 
-  depends_on 'libmnl' # R
   depends_on 'glibc' # R
+  depends_on 'libmnl' # R
 
-  def self.patch
-    # Fix /usr/bin/file: No such file or directory
-    system 'filefix'
-  end
-
-  def self.build
-    system "./configure #{CREW_OPTIONS}"
-    system 'make'
-  end
-
-  def self.install
-    system 'make', "DESTDIR=#{CREW_DEST_DIR}", 'install'
-  end
+  run_tests
 end

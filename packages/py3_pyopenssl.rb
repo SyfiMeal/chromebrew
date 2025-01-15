@@ -1,38 +1,26 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_pyopenssl < Package
+class Py3_pyopenssl < Pip
   description 'PyOpenSSL is a Python wrapper module around the OpenSSL library.'
   homepage 'https://www.pyopenssl.org/'
-  @_ver = '21.0.0'
-  version "#{@_ver}-py3.11"
+  version "25.0.0-#{CREW_PY_VER}"
   license 'Apache-2.0'
   compatibility 'all'
-  source_url 'https://github.com/pyca/pyopenssl.git'
-  git_hashtag @_ver
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyopenssl/21.0.0-py3.11_armv7l/py3_pyopenssl-21.0.0-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyopenssl/21.0.0-py3.11_armv7l/py3_pyopenssl-21.0.0-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyopenssl/21.0.0-py3.11_i686/py3_pyopenssl-21.0.0-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyopenssl/21.0.0-py3.11_x86_64/py3_pyopenssl-21.0.0-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '312537cf2ebe6f1f055906df47f3fc415e37d888aae029ce90494b39cd28fdb7',
-     armv7l: '312537cf2ebe6f1f055906df47f3fc415e37d888aae029ce90494b39cd28fdb7',
-       i686: '93c205133b6564638af1ea4bf7c850641586aa56dacb1d569f87f940c69beb41',
-     x86_64: 'b9756c7860ebdf868cf7ef6bee00885bfe2ca5f0a389ef589f75dc3870c112d8'
+    aarch64: '2359b8ea0adcb0bd29dded3dbfca2d490ff1792d0d3bdc044f42afd88accbb48',
+     armv7l: '2359b8ea0adcb0bd29dded3dbfca2d490ff1792d0d3bdc044f42afd88accbb48',
+       i686: '9bb82837c9dae4f12870e4cb5959e8b6bf4640c03b3f40b5b85c41b833af1834',
+     x86_64: '8a225d0761d5ec28a4659165193495438cec74d76f79ef1856a6a2f9ce38a3d5'
   })
 
   depends_on 'openssl'
   depends_on 'py3_cryptography'
   depends_on 'py3_six'
   depends_on 'python3' => :build
+  depends_on 'rust' => :build
 
-  def self.build
-    system "python3 setup.py build #{PY3_SETUP_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 setup.py install #{PY_SETUP_INSTALL_OPTIONS}"
-  end
+  no_source_build
 end

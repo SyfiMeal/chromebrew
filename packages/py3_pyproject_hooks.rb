@@ -1,36 +1,23 @@
-require 'package'
+require 'buildsystems/pip'
 
-class Py3_pyproject_hooks < Package
+class Py3_pyproject_hooks < Pip
   description 'This package contains wrappers to call hooks on build backends for pyproject.toml -based projects'
   homepage 'https://pyproject-hooks.readthedocs.io/'
-  @_ver = '1.0.0'
-  version "#{@_ver}-py3.11"
+  version "1.2.0-#{CREW_PY_VER}"
   license 'MIT'
   compatibility 'all'
-  source_url 'https://github.com/pypa/pyproject-hooks.git'
-  git_hashtag "v#{@_ver}"
+  source_url 'SKIP'
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyproject_hooks/1.0.0-py3.11_armv7l/py3_pyproject_hooks-1.0.0-py3.11-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyproject_hooks/1.0.0-py3.11_armv7l/py3_pyproject_hooks-1.0.0-py3.11-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyproject_hooks/1.0.0-py3.11_i686/py3_pyproject_hooks-1.0.0-py3.11-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/py3_pyproject_hooks/1.0.0-py3.11_x86_64/py3_pyproject_hooks-1.0.0-py3.11-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: '21f517d2022987ada64860830426cb7f7a769e405d42cb381f24063629433e55',
-     armv7l: '21f517d2022987ada64860830426cb7f7a769e405d42cb381f24063629433e55',
-       i686: '3de0b5be888db9484499d5083ed1011908945e36603fff4a2386869a5ba897ce',
-     x86_64: 'bc0168df62eb6b2c238a49bbfa289cdb1e3941648e8d6427552a9270fefc6579'
+    aarch64: '0ab6e768a39d869e8e7db43982dd62a2ca5016adbd680433c8f9a876d705fc13',
+     armv7l: '0ab6e768a39d869e8e7db43982dd62a2ca5016adbd680433c8f9a876d705fc13',
+       i686: '3e225c2921b952570479176b48e4ac4a20cb365cbb610655604b49f04c04f0fc',
+     x86_64: 'f9d8306849dea9f86a4a8cc8cf0f5f8a7a6fe9994e070c0f3603ca5de8141369'
   })
 
   depends_on 'python3'
   depends_on 'py3_tomli'
 
-  def self.build
-    system "SETUPTOOLS_SCM_PRETEND_VERSION=#{@_ver} python3 -m build #{PY3_BUILD_OPTIONS}"
-  end
-
-  def self.install
-    system "python3 -m installer #{PY3_INSTALLER_OPTIONS}"
-  end
+  no_source_build
 end

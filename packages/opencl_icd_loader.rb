@@ -3,19 +3,13 @@ require 'package'
 class Opencl_icd_loader < Package
   description 'OpenCL Installable Client Driver ICD Loader'
   homepage 'https://github.com/KhronosGroup/OpenCL-ICD-Loader'
-  @_ver = '2022.09.30'
-  version @_ver
+  version '2022.09.30'
   license 'Apache-2.0'
   compatibility 'all'
   source_url 'https://github.com/KhronosGroup/OpenCL-ICD-Loader.git'
-  git_hashtag "v#{@_ver}"
+  git_hashtag "v#{version}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/opencl_icd_loader/2022.09.30_armv7l/opencl_icd_loader-2022.09.30-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/opencl_icd_loader/2022.09.30_armv7l/opencl_icd_loader-2022.09.30-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/opencl_icd_loader/2022.09.30_i686/opencl_icd_loader-2022.09.30-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/opencl_icd_loader/2022.09.30_x86_64/opencl_icd_loader-2022.09.30-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
     aarch64: 'e49bb8bb67b4ab19e42f334c219c494fd05e30340df862750515017194df05e8',
      armv7l: 'e49bb8bb67b4ab19e42f334c219c494fd05e30340df862750515017194df05e8',

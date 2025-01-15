@@ -1,33 +1,28 @@
-require 'package'
+require 'buildsystems/meson'
 
-class Gimp < Package
+class Gimp < Meson
   description 'GIMP is a cross-platform image editor available for GNU/Linux, OS X, Windows and more operating systems.'
   homepage 'https://www.gimp.org/'
-  version '2.99.14'
+  version '3.0.0-RC2'
   license 'GPL-3 and LGPL-3'
-  compatibility 'all'
-  source_url 'https://download.gimp.org/gimp/v2.99/gimp-2.99.14.tar.xz'
-  source_sha256 '313a205475d1ff03c5c4d9602f09f5c975ba6c1c79d8843e2396f9fe2abdf7a8'
+  compatibility 'x86_64 aarch64 armv7l'
+  source_url 'https://gitlab.gnome.org/GNOME/gimp.git'
+  git_hashtag "GIMP_#{version.gsub('-', '_').gsub('.', '_')}"
+  binary_compression 'tar.zst'
 
-  binary_url({
-    aarch64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gimp/2.99.14_armv7l/gimp-2.99.14-chromeos-armv7l.tar.zst',
-     armv7l: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gimp/2.99.14_armv7l/gimp-2.99.14-chromeos-armv7l.tar.zst',
-       i686: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gimp/2.99.14_i686/gimp-2.99.14-chromeos-i686.tar.zst',
-     x86_64: 'https://gitlab.com/api/v4/projects/26210301/packages/generic/gimp/2.99.14_x86_64/gimp-2.99.14-chromeos-x86_64.tar.zst'
-  })
   binary_sha256({
-    aarch64: 'a1e0ae2ca1ed77cb11d746745fa4103231c7fd61959d745f2c803dcc5de29e8d',
-     armv7l: 'a1e0ae2ca1ed77cb11d746745fa4103231c7fd61959d745f2c803dcc5de29e8d',
-       i686: '0508068761b35033e80f25866f54d835a63f967da7eec4547b32f0f213d272d0',
-     x86_64: '40972b5410efa1d614286ea762d2dfcf969e346f893b172000d4e06784dbca22'
+    aarch64: '05f778dee546468b51ba819f2151320f43ac7bae96c53d64ed5365681f6b4fa7',
+     armv7l: '05f778dee546468b51ba819f2151320f43ac7bae96c53d64ed5365681f6b4fa7',
+     x86_64: '305290e55fe984eaa36ebfc0c02114903482c89634c426e466f70e444072ea2a'
   })
 
   depends_on 'aalib' # R
+  depends_on 'adwaita_icon_theme' # L
   depends_on 'alsa_lib' # R
   depends_on 'appstream_glib' # R
   depends_on 'at_spi2_core' => :build
   depends_on 'babl' # R
-  depends_on 'bz2' # R
+  depends_on 'bzip2' # R
   depends_on 'cairo' # R
   depends_on 'ffmpeg' => :build
   depends_on 'fontconfig' # R
@@ -41,19 +36,21 @@ class Gimp < Package
   depends_on 'glibc' # R
   depends_on 'glib_networking'
   depends_on 'glib' # R
+  depends_on 'gnome_icon_theme' # L
+  depends_on 'gobject_introspection' # R
   depends_on 'gtk3' # R
   depends_on 'harfbuzz' # R
-  depends_on 'ilmbase' # R
-  depends_on 'jsonc' => :build
+  depends_on 'json_c' => :build
+  depends_on 'json_c' # R
   depends_on 'json_glib' # R
   depends_on 'lcms' # R
   depends_on 'libarchive' # R
   depends_on 'libavif' => :build
   depends_on 'libexif' => :build
   depends_on 'libgudev' # R
-  depends_on 'libheif' => :build
+  depends_on 'libheif' # R
   depends_on 'libice' => :build
-  depends_on 'libjpeg' # R
+  depends_on 'libjpeg_turbo' # R
   depends_on 'libjxl' # R
   depends_on 'libmng' # R
   depends_on 'libmypaint' # R
@@ -71,6 +68,7 @@ class Gimp < Package
   depends_on 'libxmu' # R
   depends_on 'libxpm' # R
   depends_on 'libxt' => :build
+  depends_on 'libxt' # R
   depends_on 'luajit' # L
   depends_on 'luajit_lgi' # L
   depends_on 'mypaint_brushes_1' => :build
@@ -79,26 +77,42 @@ class Gimp < Package
   depends_on 'pango' # R
   depends_on 'poppler_data'
   depends_on 'poppler' # R
-  depends_on 'pygobject' # L
+  depends_on 'py3_gi_docgen' => :build
   depends_on 'py3_pycairo' # L
+  depends_on 'py3_pygobject' # L
   depends_on 'pygtk' => :build
   depends_on 'shared_mime_info' => :build
+  depends_on 'vala' => :build
   depends_on 'xdg_base' => :build
   depends_on 'xzutils' # R
-  depends_on 'zlibpkg' # R
+  depends_on 'zlib' # R
 
   gnome
 
-  def self.build
-    system "meson \
-      #{CREW_MESON_OPTIONS} \
-      -Dbug-report-url=https://github.com/chromebrew/chromebrew/issues \
-      builddir"
-    system 'meson configure builddir'
-    system 'ninja -C builddir'
-  end
+  meson_options '-Dbug-report-url=https://github.com/chromebrew/chromebrew/issues'
 
   def self.install
-    system "DESTDIR=#{CREW_DEST_DIR} ninja -C builddir install"
+    system "DESTDIR=#{CREW_DEST_DIR} #{CREW_NINJA} -C builddir install"
+    @binaries = %w[gimp gimp-console gimp-test-clipboard gimptool]
+    @binaries.each do |binary|
+      unless File.file?("#{CREW_DEST_PREFIX}/bin/#{binary}")
+        FileUtils.ln_s "#{CREW_PREFIX}/bin/#{binary}-#{version.split('.')[0..1].join('.')}",
+                       "#{CREW_DEST_PREFIX}/bin/#{binary}"
+      end
+    end
+    @man1pages = %w[gimp gimp-console gimptool]
+    @man5pages = %w[gimprc]
+    @man1pages.each do |manpage|
+      unless File.file?("#{CREW_DEST_MAN_PREFIX}/man1/#{manpage}.1")
+        FileUtils.ln_s "#{CREW_MAN_PREFIX}/man1/#{manpage}-#{version.split('.')[0..1].join('.')}.1",
+                       "#{CREW_DEST_MAN_PREFIX}/man1/#{manpage}.1"
+      end
+    end
+    @man5pages.each do |manpage|
+      unless File.file?("#{CREW_DEST_MAN_PREFIX}/man5/#{manpage}.5")
+        FileUtils.ln_s "#{CREW_MAN_PREFIX}/man5/#{manpage}-#{version.split('.')[0..1].join('.')}.5",
+                       "#{CREW_DEST_MAN_PREFIX}/man5/#{manpage}.5"
+      end
+    end
   end
 end
