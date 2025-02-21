@@ -3,18 +3,18 @@ require 'package'
 class Fzf < Package
   description 'A command-line fuzzy finder'
   homepage 'https://github.com/junegunn/fzf'
-  version '0.58.0'
+  version '0.60.0'
   license 'MIT and BSD-with-disclosure'
-  compatibility 'x86_64 aarch64 armv7l'
+  compatibility 'aarch64 armv7l x86_64'
   source_url({
     aarch64: "https://github.com/junegunn/fzf/releases/download/v#{version}/fzf-#{version}-linux_armv7.tar.gz",
      armv7l: "https://github.com/junegunn/fzf/releases/download/v#{version}/fzf-#{version}-linux_armv7.tar.gz",
      x86_64: "https://github.com/junegunn/fzf/releases/download/v#{version}/fzf-#{version}-linux_amd64.tar.gz"
   })
   source_sha256({
-    aarch64: 'c34f6bcdc825fbeae4dff0db07b2c617e4de110d66626ca3973faba2c1be89a6',
-     armv7l: 'c34f6bcdc825fbeae4dff0db07b2c617e4de110d66626ca3973faba2c1be89a6',
-     x86_64: '9b9a8ca8d45a041586323b355f613b94e3301dc6214a43adccfae225a783f0bc'
+    aarch64: '9d83faf85b27f2d7da8602024cb65a5d3218b7e36a56b036411d086f815c86c7',
+     armv7l: '9d83faf85b27f2d7da8602024cb65a5d3218b7e36a56b036411d086f815c86c7',
+     x86_64: 'c7af0376077054767ed88637f72cab78c563e2b44c4e0101ebfd84fffdbcd339'
   })
 
   no_compile_needed

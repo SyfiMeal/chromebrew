@@ -3,17 +3,17 @@ require 'package'
 class Php84 < Package
   description 'PHP is a popular general-purpose scripting language that is especially suited to web development.'
   homepage 'https://www.php.net/'
-  version '8.4.3'
+  version '8.4.4'
   license 'PHP-3.01'
-  compatibility 'x86_64 aarch64 armv7l'
+  compatibility 'aarch64 armv7l x86_64'
   source_url "https://www.php.net/distributions/php-#{version}.tar.xz"
   source_sha256 '94c8a4fd419d45748951fa6d73bd55f6bdf0adaefb8814880a67baa66027311f'
   binary_compression 'tar.zst'
 
   binary_sha256({
-    aarch64: '91a1fc63b8a3a0eb011cf8b346d45d3e5ed558775d1299d5239308b628b0e898',
-     armv7l: '91a1fc63b8a3a0eb011cf8b346d45d3e5ed558775d1299d5239308b628b0e898',
-     x86_64: '69dfe4cadd1ef11f815e45fd298a71bfab311df406bea4a570b63ae1af0063e9'
+    aarch64: '329c24214b78888939fbc161be3b7f6eba110260bb3c27b5bbf23ce2689fedc6',
+     armv7l: '329c24214b78888939fbc161be3b7f6eba110260bb3c27b5bbf23ce2689fedc6',
+     x86_64: '81a1e7846e4db18d70f73c9c34ae566eb3bc5549e12014829ba84e52036cc44e'
   })
 
   depends_on 'aspell_en' => :build

@@ -3,7 +3,7 @@ require 'buildsystems/python'
 class Py3_ruff < Python
   description 'An extremely fast Python linter, written in Rust.'
   homepage 'https://docs.astral.sh/ruff'
-  version "0.9.4-#{CREW_PY_VER}"
+  version "0.9.7-#{CREW_PY_VER}"
   license 'GPL-2.0'
   compatibility 'all'
   source_url 'https://github.com/astral-sh/ruff.git'
@@ -11,10 +11,10 @@ class Py3_ruff < Python
   binary_compression 'tar.zst'
 
   binary_sha256({
-    aarch64: 'dd591a11470d50533771681a2827ee8b95392cec4baa5505294188f10516024f',
-     armv7l: 'dd591a11470d50533771681a2827ee8b95392cec4baa5505294188f10516024f',
-       i686: '178d09031e60c6daccebc3797af76751f0cea0cfc19c7c877e0811ebdf0d6840',
-     x86_64: 'c80099bd4846a136e06bc663d4774b5edd92e26308a079364b936fde810a965a'
+    aarch64: 'dca47506403811c179ba19dfdcf4d6d13d92924937cc67ffcb149535877d3a77',
+     armv7l: 'dca47506403811c179ba19dfdcf4d6d13d92924937cc67ffcb149535877d3a77',
+       i686: '22f3b749f63715ab1d85d747b28f826d674f76e47f895ae9fb8c22619b6546e6',
+     x86_64: 'c63bfa1a63763453e59e00b84fe0477c1b73a405523aa920bb469850720fd645'
   })
 
   depends_on 'gcc_lib' # R
