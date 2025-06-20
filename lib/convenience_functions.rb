@@ -6,6 +6,15 @@ require_relative 'const'
 require_relative 'crewlog'
 require_relative 'downloader'
 
+# Reimplementation of .blank? method from ActiveSupport
+class NilClass; def blank? = true;         end
+class Numeric;  def blank? = false;        end
+class Proc;     def blank? = false;        end
+class Array;    def blank? = empty?;       end
+class Hash;     def blank? = empty?;       end
+class Symbol;   def blank? = empty?;       end
+class String;   def blank? = strip.empty?; end
+
 class ConvenienceFunctions
   def self.determine_conflicts(pkg_name, filelist = File.join(CREW_META_PATH, "#{pkg_name}.filelist"), exclude_suffix = nil, verbose: false)
     conflicts       = {}
@@ -138,7 +147,8 @@ class ConvenienceFunctions
   def self.unset_default_browser(browser_name, browser_binary)
     Dir.chdir("#{CREW_PREFIX}/bin") do
       if File.exist?('x-www-browser') && File.symlink?('x-www-browser') &&
-         File.realpath('x-www-browser') == "#{CREW_PREFIX}/share/#{browser_name.downcase}/#{browser_binary}"
+         ["#{CREW_PREFIX}/share/#{browser_name.downcase}/#{browser_binary}",
+          "#{CREW_PREFIX}/bin/#{browser_binary}"].include?(File.realpath('x-www-browser'))
         FileUtils.rm "#{CREW_PREFIX}/bin/x-www-browser"
       end
     end

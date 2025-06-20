@@ -3,17 +3,17 @@ require 'buildsystems/pip'
 class Py3_oci < Pip
   description 'Oracle Cloud Infrastructure Python SDK'
   homepage 'https://oracle-cloud-infrastructure-python-sdk.readthedocs.io/'
-  version "2.153.0-#{CREW_PY_VER}"
+  version "2.154.2-#{CREW_PY_VER}"
   license 'UPL-1.0 or Apache-2.0'
   compatibility 'all'
   source_url 'SKIP'
   binary_compression 'tar.zst'
 
   binary_sha256({
-    aarch64: 'ff913c928d33c75f073189bd05797872dbe5dbfbfc844e9b618b86a4fb5afc17',
-     armv7l: 'ff913c928d33c75f073189bd05797872dbe5dbfbfc844e9b618b86a4fb5afc17',
-       i686: 'c65d41e88ede628f7f803c444ce0e2d949936de047e37a2a279b12d90c8c7394',
-     x86_64: 'e39f0e84804245f4ff5c05ec6eb4f5ed872300248e291659978e4925232659cf'
+    aarch64: '56b824d5b5000447d6a45c78111f5fe6e9ab3b50d6f8f0148af7f87e11c962b0',
+     armv7l: '56b824d5b5000447d6a45c78111f5fe6e9ab3b50d6f8f0148af7f87e11c962b0',
+       i686: 'b57de3ef1e56e743544fec8ac20f505178c57fd2677982c48118555ca2927990',
+     x86_64: 'd4a9a233d04468189562f476efb9b634700b188562efea86bf964c57b71eba87'
   })
 
   depends_on 'py3_python_dateutil'

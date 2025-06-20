@@ -3,7 +3,7 @@ require 'package'
 class Xorg_server < Package
   description 'The Xorg Server is the core of the X Window system.'
   homepage 'https://www.x.org/wiki/'
-  version '21.1.14'
+  version '21.1.18'
   license 'BSD-3, MIT, BSD-4, MIT-with-advertising, ISC and custom'
   compatibility 'aarch64 armv7l x86_64'
   source_url 'https://gitlab.freedesktop.org/xorg/xserver.git'
@@ -11,14 +11,15 @@ class Xorg_server < Package
   binary_compression 'tar.zst'
 
   binary_sha256({
-    aarch64: '09c2ecbe391a6d40b3f120024e5b5c4ec396ad86680c759f6cdfe9c0a730374a',
-     armv7l: '09c2ecbe391a6d40b3f120024e5b5c4ec396ad86680c759f6cdfe9c0a730374a',
-     x86_64: 'b86b5ebcb1fff6c2c2167a85374271f88c04b73bd5d6036abdc2976466a43e55'
+    aarch64: '53eb71e6c32c6e758e4df4c93a5ddb40156b3f8d95684cca4e22bdd0125441c4',
+     armv7l: '53eb71e6c32c6e758e4df4c93a5ddb40156b3f8d95684cca4e22bdd0125441c4',
+     x86_64: '09a4eead337d03fa6bda48a1aec8a20cf6ecdc451bf14e7766aeb246b5f5359e'
   })
 
   depends_on 'dbus' # R
   depends_on 'eudev' # R
   depends_on 'font_util' => :build
+  depends_on 'gcc_lib' # R
   depends_on 'glibc' # R
   depends_on 'glproto' => :build
   depends_on 'graphite' => :build

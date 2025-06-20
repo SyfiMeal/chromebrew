@@ -3,10 +3,10 @@ require 'io/console'
 require 'uri'
 require_relative 'const'
 require_relative 'color'
+require_relative 'convenience_functions'
 require_relative 'progress_bar'
 require_relative 'require_gem'
 
-require_gem('activesupport', 'active_support/core_ext/object/blank')
 require_gem('ptools')
 
 begin
@@ -20,6 +20,7 @@ rescue RuntimeError => e
     Object.send(:remove_const, :CREW_USE_CURL)
     CREW_USE_CURL = true
   else
+    puts "Error is #{e}".lightred
     raise
   end
 end
@@ -69,15 +70,15 @@ def downloader(url, sha256sum, filename = File.basename(url), verbose: false)
       puts "Updating checksum for #{filename}".lightblue
       puts "from #{sha256sum} to #{calc_sha256sum}".lightblue
       puts "in #{CREW_LOCAL_REPO_ROOT}/packages/#{pkg_name}.rb .".lightblue
-      system "sed -i 's/#{sha256sum}/#{calc_sha256sum}/' #{CREW_LOCAL_REPO_ROOT}/packages/#{pkg_name}.rb"
+      system "sed 's/#{sha256sum}/#{calc_sha256sum}/g;w #{CREW_LOCAL_REPO_ROOT}/packages/#{pkg_name}.rb.new' #{CREW_LOCAL_REPO_ROOT}/packages/#{pkg_name}.rb && mv #{CREW_LOCAL_REPO_ROOT}/packages/#{pkg_name}.rb.new #{CREW_LOCAL_REPO_ROOT}/packages/#{pkg_name}.rb"
     else
       FileUtils.rm_f filename
 
       warn 'Checksum mismatch :/ Try again?'.lightred, <<~EOT
-        #{''}
-                              Filename: #{filename.lightblue}
-            Expected checksum (SHA256): #{sha256sum.green}
-          Calculated checksum (SHA256): #{calc_sha256sum.red}
+
+                            Filename: #{filename.lightblue}
+          Expected checksum (SHA256): #{sha256sum.green}
+        Calculated checksum (SHA256): #{calc_sha256sum.red}
       EOT
 
       exit 2
