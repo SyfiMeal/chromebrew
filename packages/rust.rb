@@ -3,7 +3,7 @@ require 'package'
 class Rust < Package
   description 'Rust is a systems programming language that runs blazingly fast, prevents segfaults, and guarantees thread safety.'
   homepage 'https://www.rust-lang.org/'
-  version '1.87.0'
+  version '1.88.0'
   license 'Apache-2.0 and MIT'
   compatibility 'all'
   source_url 'https://github.com/rust-lang/rustup.git'
@@ -11,10 +11,10 @@ class Rust < Package
   binary_compression 'tar.zst'
 
   binary_sha256({
-    aarch64: 'eeb8dd022d0bb8995095be753f306b9bc839e789cc0a70457d9b5f7a325e93a6',
-     armv7l: 'eeb8dd022d0bb8995095be753f306b9bc839e789cc0a70457d9b5f7a325e93a6',
-       i686: '73957edf2c0dceb891e58b6358b22e52cb7194fce84a473058c2b8b7dc756427',
-     x86_64: '9fcdd7d8f175b19a36d6b8227024d85585ca25c3d8281114604bcb57768d19e5'
+    aarch64: 'd32181e9b67d28a1b277ffe681915a6afd7af33eadf6d001fedab41b9139d7be',
+     armv7l: 'd32181e9b67d28a1b277ffe681915a6afd7af33eadf6d001fedab41b9139d7be',
+       i686: '5e065a59b81143a5b9630bc8cb966768cacfaea38e379735d07870d16a34e9b0',
+     x86_64: 'bcd48c29793bac59ce4be749d6fa23139d605aa95dab122ab198f37bbc16ae5f'
   })
 
   depends_on 'gcc_lib' # R
@@ -30,7 +30,7 @@ class Rust < Package
     ENV['RUST_BACKTRACE'] = 'full'
     ENV['CARGO_HOME'] = "#{CREW_DEST_PREFIX}/share/cargo"
     ENV['RUSTUP_HOME'] = "#{CREW_DEST_PREFIX}/share/rustup"
-    ENV['RUSTFLAGS'] = "-Cdebuginfo=0 -Copt-level=3 -Clink-arg=-fuse-ld=mold -Clink-arg=-Wl,--dynamic-linker,#{CREW_GLIBC_INTERPRETER} -Clink-arg=-Wl,-rpath,#{CREW_GLIBC_PREFIX}:#{CREW_LIB_PREFIX} -Clink-arg=-L#{CREW_GLIBC_PREFIX} -Clink-arg=-L#{CREW_LIB_PREFIX}"
+    ENV['RUSTFLAGS'] = '-Cdebuginfo=0 -Copt-level=3 -Clink-arg=-fuse-ld=mold'
 
     ENV['RUSTUP_TOOLCHAIN'] = 'stable'
     default_host = %w[aarch64 armv7l].include?(ARCH) ? 'armv7-unknown-linux-gnueabihf' : "#{ARCH}-unknown-linux-gnu"
@@ -72,6 +72,8 @@ class Rust < Package
     # building with rust, especially for building gcc 15.1.
     # This isn't being done in the build section since currently crew
     # strips rpaths during install.
+    return unless Dir.exist?(CREW_GLIBC_PREFIX)
+
     puts 'Updating rpaths for rust...'.lightblue
     default_host = %w[aarch64 armv7l].include?(ARCH) ? 'armv7-unknown-linux-gnueabihf' : "#{ARCH}-unknown-linux-gnu"
     Dir["#{CREW_PREFIX}/share/rustup/toolchains/stable-#{default_host}/bin/*"].each do |bin|

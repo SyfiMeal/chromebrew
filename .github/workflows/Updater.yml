@@ -24,7 +24,7 @@ jobs:
           persist-credentials: true
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4.3'
+          ruby-version: '3.4.4'
       - name: Install Python pip
         run: sudo apt install -y python3-pip
       - name: Install ruby-libversion  # Hopefully this will get added as an Ubuntu/Debian package so we don't have to do this manually.
@@ -79,7 +79,7 @@ jobs:
         env:
           UPDATE_BRANCH_NAME: ${{ steps.set-variables.outputs.UPDATE_BRANCH_NAME }}
         run: |
-          ruby tools/update_ruby_gem_packages.rb
+          LD_LIBRARY_PATH=/usr/local/lib ruby tools/update_ruby_gem_packages.rb
           # Create a new branch with the updated package files only
           # if there are updated packages. Otherwise exit early.
           if [ -n "$(git status --porcelain)" ]; then

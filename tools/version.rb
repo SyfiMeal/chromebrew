@@ -12,6 +12,7 @@ end
 require 'json'
 require 'net/http'
 require 'ruby_libversion'
+require 'uri/http'
 
 # Add >LOCAL< lib to LOAD_PATH
 $LOAD_PATH.unshift '../lib'
@@ -20,7 +21,19 @@ require_relative '../lib/color'
 require_relative '../lib/package'
 require_relative '../lib/package_utils'
 
-def get_version(name, homepage)
+def get_version(name, homepage, source)
+  # Determine if the source is a GitHub repository.
+  unless source.nil? || source.is_a?(Hash)
+    source.sub!('www.', '')
+    url = URI.parse(source)
+    if url.host == 'github.com'
+      url_parts = url.path.split('/')
+      unless url_parts.count < 3
+        repo = "#{url_parts[1]}/#{url_parts[2]}"
+        return `curl https://api.github.com/repos/#{repo}/releases/latest -s | jq .name -r`
+      end
+    end
+  end
   anitya_id = get_anitya_id(name, homepage)
   # If we weren't able to get an Anitya ID, return early here to save time and headaches
   return if anitya_id.nil?
@@ -44,7 +57,7 @@ def get_anitya_id(name, homepage)
     json2 = JSON.parse(Net::HTTP.get(URI("https://release-monitoring.org/api/v2/packages/?name=#{name.tr('-', '_')}")))
     return if json2['total_items'].zero?
 
-    (0..json2['total_items'] - 1).each do |i|
+    (0..(json2['total_items'] - 1)).each do |i|
       next unless json2['items'][i]['distribution'] == 'Chromebrew'
       return get_anitya_id(json2['items'][i]['project'], homepage) if json2['items'][i]['name'] == name.tr('-', '_')
     end
@@ -52,7 +65,7 @@ def get_anitya_id(name, homepage)
     candidates = []
     # First, we remove any candidates which are provided by language package managers, such as pip.
     # This is because Chromebrew does not repackage them (#7713), so they won't be what we're looking for.
-    (0..number_of_packages - 1).each do |i|
+    (0..(number_of_packages - 1)).each do |i|
       # If a package is not provided by a language package manager, the ecosystem will be set to the homepage.
       # https://release-monitoring.org/static/docs/api.html#get--api-v2-projects-
       candidates.append(i) if json['items'][i]['ecosystem'] == json['items'][i]['homepage']
@@ -127,7 +140,7 @@ if filelist.length.positive?
     end
 
     # Get the upstream version.
-    upstream_version = get_version(pkg.name.tr('_', '-'), pkg.homepage)
+    upstream_version = get_version(pkg.name.tr('_', '-'), pkg.homepage, pkg.source_url)
     # Some packages don't work with this yet, so gracefully exit now rather than throwing false positives.
     if upstream_version.nil?
       puts pkg.name.ljust(35) + 'notfound'.lightred if verbose

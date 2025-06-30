@@ -1,8 +1,9 @@
 #!/bin/bash
 # This is for use as a Github CI Unit Test.
-# Version 1.2
+# Version 1.5
 set -e
 cd /usr/local/lib/crew/packages/
+echo "CREW_BRANCH: $CREW_BRANCH"
 git clone --depth=1 --branch="$CREW_BRANCH" "$CREW_REPO" ~/build_test
 # Check if rubocop-chromebrew is installed and working, and if not install it.
 rubocop --require rubocop-chromebrew &>/dev/null || gem install rubocop-chromebrew
@@ -31,7 +32,10 @@ yes | crew remove vim
   #echo "Checking that dstat was renamed to py3_dool."
   #crew list installed | grep -q "py3_dool"
 #fi
+# Some packages are placeholders not meant to be installed.
 skip_install_packages='py3_unsupported_python'
+# Some packages don't handle being removed well.
+skip_remove_packages=''
 
 if [[ -n ${CHANGED_PACKAGES-} ]]; then
   all_compatible_packages=$(crew list -d compatible)
@@ -53,8 +57,10 @@ if [[ -n ${CHANGED_PACKAGES-} ]]; then
           yes | time crew install "${pkg}"
         fi
       fi
+      if echo "${skip_remove_packages}" | grep "^${pkg}$"; then
+          echo "Skipping remove test for ${pkg}."
       # Removal of essential packages is expected to fail.
-      if [[ $(crew list -d essential) == *"${pkg}"* ]]; then
+      elif [[ $(crew list -d essential) == *"${pkg}"* ]]; then
         echo "Testing removal of essential package ${pkg}."
         yes | time crew remove "${pkg}" || true
       else

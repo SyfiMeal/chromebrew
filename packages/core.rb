@@ -3,7 +3,7 @@ require 'package'
 class Core < Package
   description 'Core Chromebrew Packages.'
   homepage 'https://github.com/chromebrew/chromebrew'
-  version '3.12'
+  version '3.15'
   license 'GPL-3+'
   compatibility 'all'
 
@@ -17,6 +17,7 @@ class Core < Package
   depends_on 'ca_certificates'
   depends_on 'command_not_found'
   depends_on 'crew_mvdir'
+  depends_on 'crew_preload' unless CREW_GLIBC_INTERPRETER.nil?
   depends_on 'crew_profile_base'
   depends_on 'crew_sudo' if CHROMEOS_RELEASE.to_i > 116 && !CREW_IN_CONTAINER
   depends_on 'e2fsprogs'
@@ -25,18 +26,21 @@ class Core < Package
   depends_on 'filecmd'
   depends_on 'flex'
   depends_on 'gawk'
-  depends_on 'grep' if ARCH == 'armv7l'
+  depends_on 'grep'
   depends_on 'gcc_lib'
   depends_on 'gdbm'
   depends_on 'gettext'
   depends_on 'git'
   depends_on 'git_mestrelion_tools'
+  # The standalone glibc is installed on newer systems, and on older
+  # systems we have glibc_dev and glibc_lib metapackages.
   depends_on 'glibc'
+  depends_on 'glibc_lib' if CREW_GLIBC_INTERPRETER.nil?
   depends_on 'gmp'
   depends_on 'gnutls'
   depends_on 'groff'
   depends_on 'icu4c'
-  depends_on 'jq' if ARCH == 'armv7l'
+  depends_on 'jq'
   depends_on 'krb5'
   depends_on 'less'
   depends_on 'libarchive'
@@ -58,6 +62,7 @@ class Core < Package
   depends_on 'libunbound'
   depends_on 'libunistring'
   depends_on 'libversion'
+  depends_on 'libxcrypt' # Newer glibc no longer includes this.
   depends_on 'libxml2'
   depends_on 'libyaml'
   depends_on 'lz4'
@@ -84,12 +89,13 @@ class Core < Package
   depends_on 'readline'
   depends_on 'rtmpdump'
   depends_on 'ruby'
-  depends_on 'ruby_activesupport'
   depends_on 'ruby_concurrent_ruby'
   # Allows for building binary gems if necessary.
   depends_on 'ruby_gem_compiler'
   # For use in ruby prompts.
   depends_on 'ruby_highline'
+  # Needed by lib/misc_functions.
+  depends_on 'ruby_matrix'
   # Needed for buildsystems reporting.
   depends_on 'ruby_method_source'
   # Adds File.which
@@ -100,20 +106,21 @@ class Core < Package
   depends_on 'ruby_rake' if CREW_IN_CONTAINER
   # crew check -V breaks without this.
   depends_on 'ruby_ruby_libversion'
-  # Needed for rubygem updates
+  # Needed for rubygem updates.
   depends_on 'ruby_rubygems_update'
   # These are the "Default Gems" that come with Ruby.
   depends_on 'default_gems'
   # These are the "Bundled Gems" that come with Ruby.
   depends_on 'bundled_gems'
+  depends_on 'sed'
   depends_on 'slang'
   depends_on 'sqlite'
-  depends_on 'tar' if ARCH == 'armv7l'
+  depends_on 'tar'
   depends_on 'uchardet'
   depends_on 'unzip'
   depends_on 'upx'
-  depends_on 'uutils_coreutils' if ARCH == 'armv7l'
-  depends_on 'which' if ARCH == 'armv7l'
+  depends_on 'uutils_coreutils' unless ARCH == 'i686' # Currently broken.
+  depends_on 'which'
   depends_on 'xzutils'
   depends_on 'xxhash'
   depends_on 'zip'

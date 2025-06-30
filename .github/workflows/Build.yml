@@ -8,6 +8,11 @@ on:
         required: false
         type: boolean
         default: 'true'
+      allow_fail:
+        description: "Allow packages to fail building."
+        required: false
+        type: boolean
+        default: 'false'
       branch:
         description: "Branch of chromebrew/chromebrew to run on, if different from this branch."
         required: false
@@ -202,11 +207,11 @@ jobs:
                 # if [[ $GLIBC_232_COMPATIBLE_PACKAGES ]]; then
                 #     echo "CONTAINER=nocturne-x86_64.m97" >> "$GITHUB_ENV"
                 # elif [[ $GLIBC_237_COMPATIBLE_PACKAGES ]]; then
-                #     echo "CONTAINER=hatch-x86_64.m136" >> "$GITHUB_ENV"
+                #     echo "CONTAINER=hatch-x86_64.m137" >> "$GITHUB_ENV"
                 # else
                 #     echo "CONTAINER=nocturne-x86_64.m90" >> "$GITHUB_ENV"
                 # fi
-                echo "CONTAINER=hatch-x86_64.m136" >> "$GITHUB_ENV"
+                echo "CONTAINER=satmandu/crew-pre-glibc-standalone:nocturne-x86_64.m90" >> "$GITHUB_ENV"
                 echo "PLATFORM=linux/amd64" >> "$GITHUB_ENV"
                 echo "LIB_SUFFIX=64" >> "$GITHUB_ENV"
               ;;
@@ -215,17 +220,17 @@ jobs:
                 # if [[ $GLIBC_232_COMPATIBLE_PACKAGES ]]; then
                 #     echo "CONTAINER=fievel-armv7l.m97" >> "$GITHUB_ENV"
                 # elif [[ $GLIBC_237_COMPATIBLE_PACKAGES ]]; then
-                #     echo "CONTAINER=strongbad-armv7l.m136" >> "$GITHUB_ENV"
+                #     echo "CONTAINER=strongbad-armv7l.m137" >> "$GITHUB_ENV"
                 # else
                 #     echo "CONTAINER=fievel-armv7l.m91" >> "$GITHUB_ENV"
                 # fi
-                echo "CONTAINER=strongbad-armv7l.m136" >> "$GITHUB_ENV"
+                echo "CONTAINER=satmandu/crew-pre-glibc-standalone:fievel-armv7l.m91" >> "$GITHUB_ENV"
                 echo "PLATFORM=linux/arm/v7" >> "$GITHUB_ENV"
                 echo "LIB_SUFFIX=" >> "$GITHUB_ENV"
               ;;
               i686)
                 # There is only one i686 container based upon M58 with glibc 2.23.
-                echo "CONTAINER=alex-i686.m58" >> "$GITHUB_ENV"
+                echo "CONTAINER=satmandu/crew-pre-glibc-standalone:alex-i686.m58" >> "$GITHUB_ENV"
                 echo "PLATFORM=linux/386" >> "$GITHUB_ENV"
                 echo "LIB_SUFFIX=" >> "$GITHUB_ENV"
               ;;
@@ -252,7 +257,7 @@ jobs:
             git checkout "${{ env.BRANCH }}"
             git reset --hard "origin/${{ env.BRANCH }}"
             git log --oneline -10
-            docker pull --platform "${PLATFORM}" "satmandu/crewbuild:${CONTAINER}"
+            docker pull --platform "${PLATFORM}" "${CONTAINER}"
             sudo apt install -y acl
             # Detection of /output/pkg_cache dir triggers setting
             # CREW_CACHE_DIR=1 and CREW_CACHE_ENABLED=1 in the build
@@ -277,8 +282,9 @@ jobs:
               -e GITLAB_TOKEN_USERNAME="${{ secrets.GITLAB_TOKEN_USERNAME }}" \
               -v "$(pwd)"/pkg_cache:/usr/local/tmp/packages:rshared \
               -v "$(pwd)":/output:rshared \
-              "satmandu/crewbuild:${CONTAINER}" \
-              /bin/chromebrewstart /output/tools/github_actions_update_builder.sh  > >(tee -a /tmp/build.log) 2> >(tee -a /tmp/build.log >&2)
+              --tmpfs /tmp \
+              "${CONTAINER}" \
+              /bin/chromebrewstart "/output/tools/github_actions_update_builder${{ github.event.inputs.allow_fail == 'true' && '_allowing_failures' || ''}}.sh"  > >(tee -a /tmp/build.log) 2> >(tee -a /tmp/build.log >&2)
               grep "Built and Uploaded:" /tmp/build.log || true
               echo "Deleting build output directories."
               sudo rm -rf release pkg_cache
